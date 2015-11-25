@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<!--
+Hier werden die Einträge in der Sidebar festgelegt
+-->
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/nav_camara"
+            android:icon="@android:drawable/ic_menu_camera"
+            android:title="@string/activity_map_drawer_camera" />
+        <item android:id="@+id/nav_gallery"
+            android:icon="@android:drawable/ic_menu_gallery"
+            android:title="@string/activity_map_drawer_gallery" />
+        <item android:id="@+id/nav_slideshow"
+            android:icon="@android:drawable/ic_menu_slideshow"
+            android:title="@string/activity_map_drawer_slideshow" />
+        <item android:id="@+id/nav_manage"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="@string/activity_map_drawer_tools" />
+    </group>
+
+    <item android:title="@string/activity_map_drawer_title_section2">
+        <menu>
+            <item android:id="@+id/nav_share"
+                android:icon="@android:drawable/ic_menu_share"
+                android:title="@string/activity_map_drawer_share" />
+            <item android:id="@+id/nav_send"
+                android:icon="@android:drawable/ic_menu_send"
+                android:title="@string/activity_map_drawer_send" />
+        </menu>
+    </item>
+
+</menu>
