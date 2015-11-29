@@ -7,7 +7,7 @@
 
     <!-- Strings related to Settings -->
 
-    <string name="content_map_textview_text">Distance to Danger</string>
+    <string name="content_map_textview_text">Distance to nearest peril</string>
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
@@ -70,11 +70,16 @@
     
     <!-- Strings für die Einträge in der Sidebar
     -->
-    <string name="activity_map_drawer_camera">Import</string>
-    <string name="activity_map_drawer_gallery">Gallery</string>
-    <string name="activity_map_drawer_slideshow">Slideshow</string>
+    <string name="activity_map_drawer_sound">Sound</string>
+    <string name="activity_map_drawer_vibration">Vibration</string>
+    <string name="activity_map_drawer_visual">Visual</string>
     <string name="activity_map_drawer_tools">Tools</string>
     <string name="activity_map_drawer_title_section2">Communicate</string>
     <string name="activity_map_drawer_share">Share</string>
     <string name="activity_map_drawer_send">Send</string>
-</resources>
+    <string name="avtivity_map_drawer_settings_title">Notifications</string>
+
+    <string name="nav_header_map_headline">SecureBiker</string>
+    <string name="nav_header_map_subtitle">Settings</string>
+
+    </resources>

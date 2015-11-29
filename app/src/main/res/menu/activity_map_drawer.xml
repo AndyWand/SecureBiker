@@ -1,29 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-<!--
-Hier werden die Einträge in der Sidebar festgelegt
--->
-    <group android:checkableBehavior="single">
-        <item android:id="@+id/nav_camara"
-            android:icon="@android:drawable/ic_menu_camera"
-            android:title="@string/activity_map_drawer_camera" />
-        <item android:id="@+id/nav_gallery"
-            android:icon="@android:drawable/ic_menu_gallery"
-            android:title="@string/activity_map_drawer_gallery" />
-        <item android:id="@+id/nav_slideshow"
-            android:icon="@android:drawable/ic_menu_slideshow"
-            android:title="@string/activity_map_drawer_slideshow" />
-        <item android:id="@+id/nav_manage"
-            android:icon="@android:drawable/ic_menu_manage"
-            android:title="@string/activity_map_drawer_tools" />
-    </group>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="ng.edu.binghamuni.bhu.ui.activity.HomeActivity">
+    <!--
+    Hier werden die Einträge in der Sidebar festgelegt    -->
+
+    <item
+        android:id="@+id/nav_sound"
+        android:icon="@drawable/ic_notifications_active_black_48dp"
+        android:title="@string/activity_map_drawer_sound" />
+    <item
+        android:id="@+id/nav_vibration"
+        android:icon="@android:drawable/ic_menu_gallery"
+        android:title="@string/activity_map_drawer_vibration" />
+    <item
+        android:id="@+id/nav_visual"
+        android:icon="@drawable/ic_warning_black_48dp"
+        android:title="@string/activity_map_drawer_visual"
+        app:showAsAction="always"
+        />
+    <item
+        android:id="@+id/nav_manage"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="@string/activity_map_drawer_tools" />
 
     <item android:title="@string/activity_map_drawer_title_section2">
         <menu>
-            <item android:id="@+id/nav_share"
+            <item
+                android:id="@+id/nav_share"
                 android:icon="@android:drawable/ic_menu_share"
                 android:title="@string/activity_map_drawer_share" />
-            <item android:id="@+id/nav_send"
+            <item
+                android:id="@+id/nav_send"
                 android:icon="@android:drawable/ic_menu_send"
                 android:title="@string/activity_map_drawer_send" />
         </menu>

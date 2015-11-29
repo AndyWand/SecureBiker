@@ -1,5 +1,9 @@
 package com.example.andreas.securebiker;
 
+import android.annotation.TargetApi;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,12 +21,18 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import java.util.ArrayList;
+
+import static android.graphics.Color.GREEN;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private final int REQUESTCODE_SETTINGS = 1;
 
     private GoogleMap mMap;
+    private HelperClass helper = new HelperClass();
+    private ArrayList<Point> perils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +63,9 @@ public class MainActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        //Fügt GS aus exampledata.xml in das Array ein
+        perils = helper.getExample();
     }
 
     @Override
@@ -93,11 +106,11 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camara) {
+        if (id == R.id.nav_sound) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_vibration) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_visual) {
 
         } else if (id == R.id.nav_manage) {
 
