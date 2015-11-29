@@ -1,14 +1,10 @@
 package com.example.andreas.securebiker;
 
-import android.annotation.TargetApi;
-import android.graphics.Color;
-import android.graphics.Point;
-import android.os.Build;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,23 +12,38 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-
-import static android.graphics.Color.GREEN;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private final int REQUESTCODE_SETTINGS = 1;
+    private ArrayList<Geofence> geofenceList;
+    private Location lastLocation;
+    private GoogleApiClient googleApiClient;
+    private CameraPosition cameraPosition;
+    private LatLng pos;
+    private Marker marker;
 
     private GoogleMap mMap;
     private HelperClass helper = new HelperClass();
-    private ArrayList<Point> perils;
+    private ArrayList<LatLng> perils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,5 +145,45 @@ public class MainActivity extends AppCompatActivity
          mMap.addMarker(new MarkerOptions().position(currentLocation).title("Marker in Sydney"));
          mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
          **/
+    }
+
+    /**
+     * Methode zur Initalisierung der Liste mit Test-Geofences
+     * Entnimmt die Punkte aus ArrayList:perils (in on Create initialisiert) und legt diese als
+     * Geofence-Objekte an
+     */
+    private void initializeGeofences() {
+        geofenceList = new ArrayList<>();
+        for (LatLng gF : perils) {
+            Geofence a = new Geofence.Builder().setCircularRegion(gF.latitude, gF.longitude, 150)
+                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                    .setRequestId("1").build();
+            geofenceList.add(a);
+        }
+    }
+
+    public void onConnected(Bundle bundle) {
+        lastLocation = LocationServices.FusedLocationApi.getLastLocation((googleApiClient));
+        if (lastLocation != null) {
+            // Auslesen der Koordinaten aus lastLocation
+            pos = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+            marker = mMap.addMarker(new MarkerOptions()
+                    .position(pos)
+                    .title("Here I am!"));
+            // Defintion von Kamera-Einstellungen
+            cameraPosition = new CameraPosition.Builder().
+                    target(pos)
+                    .zoom(16)
+                    .build();
+            // Kamera wird auf aktuelle Position ausgerechnet
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            //Einlesen der GS um diese dazustellen
+            for (LatLng gF : perils) {
+                mMap.addMarker(new MarkerOptions()
+                        .position(gF)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.peril_marker)));
+            }
+        }
     }
 }
