@@ -1,16 +1,14 @@
 package com.example.andreas.securebiker;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
-
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
@@ -31,6 +29,7 @@ public class GeofenceIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
+
         if (geofencingEvent.hasError()) {
             // TBD
         }
@@ -48,36 +47,19 @@ public class GeofenceIntentService extends IntentService {
         i.putExtra(GEOFENCE_ID,id);
 
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
-       // NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        //nManager.notify(0, buildNotification().build());
+        buildNotification();
     }
 
-    public NotificationCompat.Builder buildNotification() {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-
-        // Definition des Alarmsignals
-        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-
-        mBuilder.setSound(soundUri)
-                .setContentText("Gefahrenstelle naht!")
-                .setContentTitle("Alarm");
-
-        Intent intent = new Intent(this, MainActivity.class);
-
-        //intent.setAction(BROADCAST_ACTION);
-        //intent.addCategory(Intent.CATEGORY_DEFAULT);
-        //PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        // Konstruktion eines künstlichen BackStack für cross-task-Navigation
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(MainActivity.class);
-        stackBuilder.addNextIntent(intent);
-        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-        mBuilder.setContentIntent(pendingIntent);
-
-        //mBuilder.setContentIntent(pendingIntent);
-
-        return mBuilder;
+    /**
+     * Methode zur Bildung und Versand von Warn-Notification mit Alarm-Sound
+     */
+    public void buildNotification() {
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder mBuilder;
+        mBuilder = new NotificationCompat.Builder(this)
+                .setSound(alarmSound)
+                .setCategory(Notification.CATEGORY_ALARM);
+        mNotificationManager.notify(0, mBuilder.build());
     }
 }

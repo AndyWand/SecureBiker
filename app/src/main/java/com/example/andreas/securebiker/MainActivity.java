@@ -1,22 +1,17 @@
 package com.example.andreas.securebiker;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.location.Location;
-import android.media.MediaPlayer;
-import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.service.notification.StatusBarNotification;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NotificationCompat;
@@ -29,6 +24,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
@@ -55,6 +51,7 @@ public class MainActivity extends AppCompatActivity
         LocationListener {
 
     private final int REQUESTCODE_SETTINGS = 1;
+    private static final String NOT = "NOTIFICATIONS";
 
     private GoogleApiClient googleApiClient;
     private GoogleMap mMap;
@@ -66,12 +63,14 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<Geofence> geofenceList;
     private AlarmBroadcastReceiver aB;
     private ArrayList<Circle> geofencePufferList;
-
+    private ArrayList<String> currentGeofences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        // GUI-Gedöns
         setContentView(R.layout.activity_map);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -86,7 +85,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        geofencePufferList = new ArrayList<Circle>();
+        geofencePufferList = new ArrayList<>();
+        currentGeofences = new ArrayList<>();
 
         // BroadcastReceiver-Gedöns
         aB = new AlarmBroadcastReceiver();
@@ -261,8 +261,8 @@ public class MainActivity extends AppCompatActivity
                     .position(pos)
                     .title("Here I am!"));
             // Defintion von Kamera-Einstellungen
-            cameraPosition = new CameraPosition.Builder().
-                    target(pos)
+            cameraPosition = new CameraPosition.Builder()
+                    .target(pos)
                     .zoom(16)
                     .build();
             // Kamera wird auf aktuelle Position ausgerechnet
@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity
         // Die Verbindung zur Google Play Services ist unterbrochen worden
         // LocationUpdates werden ausgesetzt
         stopLocationUpdates();
-        // Aufruf von connect(), um Verbinding wieder aufzubauen
+        // Aufruf von connect(), um Verbindung wieder aufzubauen
         googleApiClient.connect();
     }
 
@@ -311,9 +311,9 @@ public class MainActivity extends AppCompatActivity
      * Methode zur Initalisierung der Liste mit Test-Geofences
      */
     private void initializeGeofences() {
-        LatLng gF = new LatLng(51.5221335, 7.2802826);
+        LatLng gF1 = new LatLng(51.5221335, 7.2802826);
         geofenceList = new ArrayList<>();
-        Geofence a = new Geofence.Builder().setCircularRegion(gF.latitude, gF.longitude, 150)
+        Geofence a = new Geofence.Builder().setCircularRegion(gF1.latitude, gF1.longitude, 150)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
                 .setRequestId("1").build();
@@ -367,65 +367,27 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            //String id = intent.getStringExtra(GeofenceIntentService.GEOFENCE_ID);
+            String id = intent.getStringExtra(GeofenceIntentService.GEOFENCE_ID);
             Circle c = mMap.addCircle(new CircleOptions()
                     .radius(150)
                     .center(new LatLng(51.5221335, 7.2802826))
                     .fillColor(Color.argb(100, 0, 0, 255))
                     .strokeWidth(0.1f));
             geofencePufferList.add(c);
-            buildNotification(context);
+            currentGeofences.add(id);
             showAlarmDialog();
         }
-
-        public void buildNotification(Context context){
-            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationCompat.Builder mBuilder;
-            mBuilder =
-                    new NotificationCompat.Builder(context)
-                            .setSound(alarmSound);
-            mNotificationManager.notify(0, mBuilder.build());
-        }
-
-        public void endNotification(){
-            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-           // StatusBarNotification[] sbns = mNotificationManager.getActiveNotifications();
-        }
-
-
     }
 
     /**
-     * Fragment zur Darstellung eines WarnDialogs bei Eintritt in Geofence-Puffer
+     * Methode zur Darstellung des Warn-Dialogs
      */
-    public static class AlarmDialogFragment extends DialogFragment {
-
-        NotificationManager notificationManager;
-
-
-        public Dialog onCreateDialog(Bundle saveInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.Title_AlarmDialogFragment)
-                    .setMessage(R.string.Message_AlarmDialogFragment)
-                    .setNeutralButton(R.string.Button_AlarmDialogFragment, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-
-            return builder.create();
-        }
-    }
     public void showAlarmDialog() {
         DialogFragment newFragment = new AlarmDialogFragment();
         try {
             newFragment.show(getSupportFragmentManager(), "alarm");
-        } catch(IllegalStateException e){
+        } catch (IllegalStateException e) {
             return;
         }
-        /*Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        MediaPlayer mp = MediaPlayer.create(getApplicationContext(), notification);
-        mp.start();*/
     }
 }
