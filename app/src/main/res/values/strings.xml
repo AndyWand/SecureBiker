@@ -77,4 +77,10 @@
     <string name="activity_map_drawer_title_section2">Communicate</string>
     <string name="activity_map_drawer_share">Share</string>
     <string name="activity_map_drawer_send">Send</string>
+
+    <!-- Strings für Messages -->
+    <string name="No_Location_Available">No Location available</string>
+    <string name="Title_AlarmDialogFragment">Achtung</string>
+    <string name="Message_AlarmDialogFragment">Gefahr in Verzug</string>
+    <string name="Button_AlarmDialogFragment">Ok</string>
 </resources>

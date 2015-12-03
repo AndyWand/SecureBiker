@@ -3,7 +3,7 @@
     package="com.example.andreas.securebiker">
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="9"
         android:targetSdkVersion="23" />
 
     <!--
@@ -48,6 +48,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".GeofenceIntentService"/>
     </application>
 
 </manifest>
