@@ -70,13 +70,16 @@
     
     <!-- Strings für die Einträge in der Sidebar
     -->
-    <string name="activity_map_drawer_camera">Import</string>
-    <string name="activity_map_drawer_gallery">Gallery</string>
-    <string name="activity_map_drawer_slideshow">Slideshow</string>
+    <string name="activity_map_drawer_sound">Sound</string>
+    <string name="activity_map_drawer_vibration">Vibration</string>
+    <string name="activity_map_drawer_visual">Visual</string>
     <string name="activity_map_drawer_tools">Tools</string>
     <string name="activity_map_drawer_title_section2">Communicate</string>
     <string name="activity_map_drawer_share">Share</string>
     <string name="activity_map_drawer_send">Send</string>
+
+    <string name="nav_header_map_headline">SecureBiker</string>
+    <string name="nav_header_map_subtitle">Settings</string>
 
     <!-- Strings für Messages -->
     <string name="No_Location_Available">No Location available</string>
