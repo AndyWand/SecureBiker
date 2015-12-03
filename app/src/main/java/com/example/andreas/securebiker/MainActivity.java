@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity
 
     private final int REQUESTCODE_SETTINGS = 1;
     private static final String NOT = "NOTIFICATIONS";
-    String s;
+
     private GoogleApiClient googleApiClient;
     private GoogleMap mMap;
     private CameraPosition cameraPosition;
