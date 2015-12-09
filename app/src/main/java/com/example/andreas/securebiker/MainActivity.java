@@ -144,13 +144,21 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+            //turn sound on/off
         if (id == R.id.nav_sound) {
-            // Handle the camera action
+           //turn vibration on/off
         } else if (id == R.id.nav_vibration) {
-
+            //turn visual alert on/off
         } else if (id == R.id.nav_visual) {
-
+            DrawerLayout drawer = (DrawerLayout) findViewById(id);
+      /**      ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, drawer,
+                    R.drawable.ic_info_black_24dp, // nav menu toggle icon
+                    R.string.app_name, // nav drawer open - description for
+                    // accessibility
+                    R.string.app_name // nav drawer close - description for
+                    // accessibility
+            );
+       **/
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
@@ -192,7 +200,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         // Entfernt Marker zur aktuellen Position
-        marker.remove();
+        if (!(marker == null)) {
+            marker.remove();
+        }
         // Entfernt aktuelle Puffer um Gefahrenstellen
         for (int i = 0; i < geofencePufferList.size(); i++)
             geofencePufferList.get(i).remove();
@@ -315,6 +325,9 @@ public class MainActivity extends AppCompatActivity
      * Methode zur Initalisierung der Liste mit Test-Geofences
      */
     private void initializeGeofences() {
+        HelperClass help = new HelperClass();
+        ltlng = help.getExample();
+        geofenceList = new ArrayList<>();
 
         for (int i = 0; i < ltlng.size(); i++) {
             LatLng l = ltlng.get(i);
