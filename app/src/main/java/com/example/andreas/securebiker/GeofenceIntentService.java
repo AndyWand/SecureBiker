@@ -9,6 +9,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
@@ -39,13 +40,15 @@ public class GeofenceIntentService extends IntentService {
 
         // Get the Geofences that were triggered
         List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
-        String id = triggeringGeofences.get(0).getRequestId();
+        int s = triggeringGeofences.size();
+        String[] ids = new String[s];
+        for (int i = 0; i < s; i++)
+            ids[i] = triggeringGeofences.get(i).getRequestId();
 
         Intent i = new Intent();
         i.setAction(BROADCAST_ACTION);
         i.addCategory(Intent.CATEGORY_DEFAULT);
-        i.putExtra(GEOFENCE_ID,id);
-
+        i.putExtra(GEOFENCE_ID, ids);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
         buildNotification();
     }
