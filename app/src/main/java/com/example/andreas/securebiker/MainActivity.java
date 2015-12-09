@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
-
+    String s;
     private final int REQUESTCODE_SETTINGS = 1;
     private static final String NOT = "NOTIFICATIONS";
 
