@@ -60,11 +60,8 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<Circle> geofencePufferList;
     private ArrayList<String> currentGeofences;
     private ArrayList<LatLng> ltlng;
-<<<<<<< HEAD
-=======
     private FileReaderTask task = null;
     private boolean alarmDialogOn = false;
->>>>>>> refs/heads/pr/2
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -328,17 +325,9 @@ public class MainActivity extends AppCompatActivity
      * Methode zur Initalisierung der Liste mit Test-Geofences
      */
     private void initializeGeofences() {
-<<<<<<< HEAD
         HelperClass help = new HelperClass();
         ltlng = help.getExample();
-        LatLng gF1 = new LatLng(51.5221335, 7.2802826);
         geofenceList = new ArrayList<>();
-        Geofence a = new Geofence.Builder().setCircularRegion(gF1.latitude, gF1.longitude, 150)
-                .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
-                .setRequestId("1").build();
-        geofenceList.add(a);
-=======
 
         for (int i = 0; i < ltlng.size(); i++) {
             LatLng l = ltlng.get(i);
@@ -348,7 +337,6 @@ public class MainActivity extends AppCompatActivity
                     .setRequestId(Integer.toString(i)).build();
             geofenceList.add(a);
         }
->>>>>>> refs/heads/pr/2
     }
 
     /**
