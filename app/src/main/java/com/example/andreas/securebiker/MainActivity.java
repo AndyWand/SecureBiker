@@ -1,7 +1,5 @@
 package com.example.andreas.securebiker;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,12 +7,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.location.Location;
-import android.media.RingtoneManager;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -24,7 +20,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
@@ -64,6 +59,9 @@ public class MainActivity extends AppCompatActivity
     private AlarmBroadcastReceiver aB;
     private ArrayList<Circle> geofencePufferList;
     private ArrayList<String> currentGeofences;
+    private ArrayList<LatLng> ltlng;
+    private FileReaderTask task = null;
+    private boolean alarmDialogOn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +83,13 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        geofenceList = new ArrayList();
         geofencePufferList = new ArrayList<>();
         currentGeofences = new ArrayList<>();
+
+        // Initialisieren und ausführen der FileReaderTask zum Import der TestLocations für das Geofencing
+        //task = new FileReaderTask();
+        //task.execute();
 
         // BroadcastReceiver-Gedöns
         aB = new AlarmBroadcastReceiver();
@@ -267,6 +270,7 @@ public class MainActivity extends AppCompatActivity
                     .build();
             // Kamera wird auf aktuelle Position ausgerechnet
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
         }
 
         // Location-Updates werden gestartet
@@ -311,13 +315,14 @@ public class MainActivity extends AppCompatActivity
      * Methode zur Initalisierung der Liste mit Test-Geofences
      */
     private void initializeGeofences() {
-        LatLng gF1 = new LatLng(51.5221335, 7.2802826);
-        geofenceList = new ArrayList<>();
-        Geofence a = new Geofence.Builder().setCircularRegion(gF1.latitude, gF1.longitude, 150)
-                .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
-                .setRequestId("1").build();
-        geofenceList.add(a);
+        for (int i = 0; i < ltlng.size(); i++) {
+            LatLng l = ltlng.get(i);
+            Geofence a = new Geofence.Builder().setCircularRegion(l.latitude, l.longitude, 150)
+                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                    .setRequestId(Integer.toString(i)).build();
+            geofenceList.add(a);
+        }
     }
 
     /**
@@ -367,27 +372,57 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String id = intent.getStringExtra(GeofenceIntentService.GEOFENCE_ID);
-            Circle c = mMap.addCircle(new CircleOptions()
-                    .radius(150)
-                    .center(new LatLng(51.5221335, 7.2802826))
-                    .fillColor(Color.argb(100, 0, 0, 255))
-                    .strokeWidth(0.1f));
-            geofencePufferList.add(c);
-            currentGeofences.add(id);
-            showAlarmDialog();
+            String[] ids = intent.getStringArrayExtra(GeofenceIntentService.GEOFENCE_ID);
+            for (int i = 0; i < ids.length; i++) {
+                LatLng l = ltlng.get(i);
+                Circle c = mMap.addCircle(new CircleOptions()
+                        .radius(150)
+                        .center(l)
+                        .fillColor(Color.argb(100, 0, 0, 255))
+                        .strokeWidth(0.1f));
+                geofencePufferList.add(c);
+                currentGeofences.add(ids[i]);
+            }
         }
+
+        /**
+         * Methode zur Darstellung des Warn-Dialogs
+         */
+        public void showAlarmDialog() {
+            DialogFragment newFragment = new AlarmDialogFragment();
+            try {
+                newFragment.show(getSupportFragmentManager(), "alarm");
+            } catch (IllegalStateException e) {
+                return;
+            }
+        }
+
+
     }
 
     /**
-     * Methode zur Darstellung des Warn-Dialogs
+     * Eigene AsyncTask-Klasse zum Import von Geofence-Locations
      */
-    public void showAlarmDialog() {
-        DialogFragment newFragment = new AlarmDialogFragment();
-        try {
-            newFragment.show(getSupportFragmentManager(), "alarm");
-        } catch (IllegalStateException e) {
-            return;
+    public class FileReaderTask extends AsyncTask<Void, Void, ArrayList<LatLng>> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected ArrayList<LatLng> doInBackground(Void... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<LatLng> latLngs) {
+            ltlng = latLngs;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
         }
     }
 }
