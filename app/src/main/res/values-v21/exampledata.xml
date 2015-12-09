@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>>
+<resources>
+    <integer name="number">5</integer>
     <item name="numberofpoints" type="integer">4</item>
     <item name="p1" type="array">51.448154 7.268802
     </item>
@@ -9,4 +10,5 @@
     </item>
     <item name="point" type="array">51.447987 7.270572
     </item>
+
 </resources>
