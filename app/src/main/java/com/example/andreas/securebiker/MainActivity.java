@@ -315,6 +315,7 @@ public class MainActivity extends AppCompatActivity
      * Methode zur Initalisierung der Liste mit Test-Geofences
      */
     private void initializeGeofences() {
+
         for (int i = 0; i < ltlng.size(); i++) {
             LatLng l = ltlng.get(i);
             Geofence a = new Geofence.Builder().setCircularRegion(l.latitude, l.longitude, 150)
