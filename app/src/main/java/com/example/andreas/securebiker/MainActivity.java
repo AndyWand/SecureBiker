@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity
     private AlarmBroadcastReceiver aB;
     private ArrayList<Circle> geofencePufferList;
     private ArrayList<String> currentGeofences;
+    private ArrayList<LatLng> ltlng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -321,6 +322,8 @@ public class MainActivity extends AppCompatActivity
      * Methode zur Initalisierung der Liste mit Test-Geofences
      */
     private void initializeGeofences() {
+        HelperClass help = new HelperClass();
+        ltlng = help.getExample();
         LatLng gF1 = new LatLng(51.5221335, 7.2802826);
         geofenceList = new ArrayList<>();
         Geofence a = new Geofence.Builder().setCircularRegion(gF1.latitude, gF1.longitude, 150)
