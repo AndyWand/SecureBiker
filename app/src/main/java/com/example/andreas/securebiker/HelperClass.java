@@ -1,15 +1,9 @@
 package com.example.andreas.securebiker;
 
-import android.graphics.Point;
+
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
-
 import com.google.android.gms.maps.model.LatLng;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-
-import org.w3c.dom.*;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +16,7 @@ import java.util.ArrayList;
 public class HelperClass extends AppCompatActivity {
 
 
-    public ArrayList<LatLng> getExample() {
+    public static ArrayList<LatLng> getExample(Context c) {
 
         ArrayList<LatLng> list = new ArrayList<LatLng>();
         String s = "";
@@ -31,7 +25,7 @@ public class HelperClass extends AppCompatActivity {
         BufferedReader br = null;
 
         try {
-            in = getResources().openRawResource(R.raw.examplepoints);
+            in = c.getResources().openRawResource(R.raw.point);
             inr = new InputStreamReader(in);
             br = new BufferedReader(inr);
             while ((s = br.readLine()) != null) {
