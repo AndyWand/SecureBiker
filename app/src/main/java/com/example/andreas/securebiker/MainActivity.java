@@ -16,6 +16,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -325,10 +326,8 @@ public class MainActivity extends AppCompatActivity
      * Methode zur Initalisierung der Liste mit Test-Geofences
      */
     private void initializeGeofences() {
-        HelperClass help = new HelperClass();
-        ltlng = help.getExample();
+        ltlng = HelperClass.getExample(this);
         geofenceList = new ArrayList<>();
-
         for (int i = 0; i < ltlng.size(); i++) {
             LatLng l = ltlng.get(i);
             Geofence a = new Geofence.Builder().setCircularRegion(l.latitude, l.longitude, 150)
@@ -388,7 +387,7 @@ public class MainActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent) {
             String[] ids = intent.getStringArrayExtra(GeofenceIntentService.GEOFENCE_ID);
             for (int i = 0; i < ids.length; i++) {
-                LatLng l = ltlng.get(i);
+                LatLng l = ltlng.get(Integer.parseInt(ids[i]));
                 Circle c = mMap.addCircle(new CircleOptions()
                         .radius(150)
                         .center(l)
@@ -397,6 +396,7 @@ public class MainActivity extends AppCompatActivity
                 geofencePufferList.add(c);
                 currentGeofences.add(ids[i]);
             }
+            showAlarmDialog();
         }
 
         /**
