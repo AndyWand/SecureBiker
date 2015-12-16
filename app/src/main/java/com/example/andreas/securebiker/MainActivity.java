@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -21,6 +23,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
@@ -68,6 +71,9 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        // Prüft GPS-Status
+        checkGPS();
 
         // GUI-Gedöns
         setContentView(R.layout.activity_map);
@@ -145,21 +151,21 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-            //turn sound on/off
+        //turn sound on/off
         if (id == R.id.nav_sound) {
-           //turn vibration on/off
+            //turn vibration on/off
         } else if (id == R.id.nav_vibration) {
             //turn visual alert on/off
         } else if (id == R.id.nav_visual) {
             DrawerLayout drawer = (DrawerLayout) findViewById(id);
-      /**      ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, drawer,
-                    R.drawable.ic_info_black_24dp, // nav menu toggle icon
-                    R.string.app_name, // nav drawer open - description for
-                    // accessibility
-                    R.string.app_name // nav drawer close - description for
-                    // accessibility
-            );
-       **/
+            /**      ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, drawer,
+             R.drawable.ic_info_black_24dp, // nav menu toggle icon
+             R.string.app_name, // nav drawer open - description for
+             // accessibility
+             R.string.app_name // nav drawer close - description for
+             // accessibility
+             );
+             **/
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
@@ -214,6 +220,19 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+
+    /**
+     * Methode, die überprüft, ob GPS aktiviert ist
+     */
+    private void checkGPS() {
+        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
+        boolean gpsEnabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (!gpsEnabled) {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }
     }
 
     /**

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -57,6 +58,14 @@ public class GeofenceIntentService extends IntentService {
      * Methode zur Bildung und Versand von Warn-Notification mit Alarm-Sound
      */
     public void buildNotification() {
+        // Wake-Lock-Gedöns
+        PowerManager pm = (PowerManager)
+                getSystemService(Context.POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = pm.newWakeLock(
+                PowerManager.PARTIAL_WAKE_LOCK, "");
+        wakeLock.acquire();
+
+        // Notification-Gedöns
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder mBuilder;
@@ -64,5 +73,8 @@ public class GeofenceIntentService extends IntentService {
                 .setSound(alarmSound)
                 .setCategory(Notification.CATEGORY_ALARM);
         mNotificationManager.notify(0, mBuilder.build());
+
+        // Wake-Lock-Gedöns
+        wakeLock.release();
     }
 }
