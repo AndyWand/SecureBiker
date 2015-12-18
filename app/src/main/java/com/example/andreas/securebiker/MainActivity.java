@@ -42,7 +42,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
@@ -52,6 +55,16 @@ public class MainActivity extends AppCompatActivity
     private final int REQUESTCODE_SETTINGS = 1;
     private static final String NOT = "NOTIFICATIONS";
 
+    // Boolean-Flags für Settings
+    private boolean soundEnabled = true;
+    private boolean vibrationEnabled = true;
+    private boolean alertDialogEnabled = true;
+
+    // Laufzeit des AlarmDialog-Fensters
+    private int time = 5000;
+
+    private Timer timer;
+    private DialogFragment newFragment;
     private GoogleApiClient googleApiClient;
     private GoogleMap mMap;
     private CameraPosition cameraPosition;
@@ -219,9 +232,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        if (timer != null)
+            timer.cancel();
         super.onDestroy();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (newFragment != null)
+            newFragment.dismiss(); // Damit WarnDialog nicht in outState gespeichert wird und somit beim Neuaufbau der Activity nicht zwei Dialoge stehen können
+        super.onSaveInstanceState(outState);
+    }
 
     /**
      * Methode, die überprüft, ob GPS aktiviert ist
@@ -415,19 +436,35 @@ public class MainActivity extends AppCompatActivity
                 geofencePufferList.add(c);
                 currentGeofences.add(ids[i]);
             }
-            showAlarmDialog();
+            if (newFragment == null)
+                showAlarmDialog();
         }
 
         /**
          * Methode zur Darstellung des Warn-Dialogs
          */
         public void showAlarmDialog() {
-            DialogFragment newFragment = new AlarmDialogFragment();
+            newFragment = new AlarmDialogFragment();
             try {
                 newFragment.show(getSupportFragmentManager(), "alarm");
             } catch (IllegalStateException e) {
                 return;
             }
+            // TimerTask zur automatischen Schließung des DialogFensters
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                public void run() {
+                    try {
+                        newFragment.dismiss();
+                        // nach Ablauf des Timers schließt sich das DialogFenster automatisch
+                    } catch (IllegalStateException e) {
+                        return;
+                    } finally {
+                        newFragment = null;
+                    }
+
+                }
+            }, time); // Laufzeit des DialogFensters: 5 Sek
         }
 
 
