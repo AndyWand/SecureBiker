@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+        <com.example.andreas.securebiker.Fragments.SeekBarPreference
+            android:background="@color/colorPrimary"
+            android:defaultValue="50"
+            android:dialogMessage="@string/settings_dialog_message"
+            android:indeterminate="false"
+            android:key="SEEKBAR_VALUE"
+            android:max="200"
+            android:padding="20dp"
+            android:progress="@dimen/activity_settings_seekbar_progress"
+            android:summary="@string/settings_summary"
+            android:text="@string/settings_unit"
+            android:title="@string/settings_title" />
+
+</PreferenceScreen>
+
+<!--
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/activity_settings_textview_text" />
+
+        <SeekBar
+            android:id="@+id/seekBar_radius"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+    </LinearLayout>
+    -->

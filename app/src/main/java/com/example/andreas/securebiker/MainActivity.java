@@ -5,10 +5,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -16,11 +18,12 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.example.andreas.securebiker.Fragments.AllPreferencesFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
@@ -106,6 +109,13 @@ public class MainActivity extends AppCompatActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         buildGoogleApiClient();
+
+        // load preferences from the system
+        PreferenceManager.setDefaultValues(this, R.xml.pref_all, false);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPrefs.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 50);
+        alarmDialogOn = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ALARMDIALOG,false);
+
     }
 
     @Override
@@ -133,33 +143,62 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                //open Settings-Activity
+                runSettingsActivity();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Methode wird aufgerufen, wenn der Settings-Button gedrückt wird
+     */
+    private void runSettingsActivity() {
+        Intent settings_intent = new Intent(this, SettingsActivity.class);
+        startActivity(settings_intent);
+    }
+
+    /**
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == REQUESTCODE_SETTINGS && resultCode == RESULT_OK) {
+            // Make sure the request was successful
+            Bundle extras = data.getExtras();
+            //Radius der Geofences hohlen
+            extras.get("fences_radius");
+            /**
+             Bundle extras = data.getExtras();
+             Bitmap image =(Bitmap) extras.get("data");
+             ImageView imageView = (ImageView) findViewById(R.id.imageView);
+             imageView.setImageBitmap(image);
+
+        }
+
+    }
+        **/
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-            //turn sound on/off
+        //turn sound on/off
         if (id == R.id.nav_sound) {
-           //turn vibration on/off
+            //turn vibration on/off
         } else if (id == R.id.nav_vibration) {
             //turn visual alert on/off
         } else if (id == R.id.nav_visual) {
             DrawerLayout drawer = (DrawerLayout) findViewById(id);
-      /**      ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, drawer,
-                    R.drawable.ic_info_black_24dp, // nav menu toggle icon
-                    R.string.app_name, // nav drawer open - description for
-                    // accessibility
-                    R.string.app_name // nav drawer close - description for
-                    // accessibility
-            );
-       **/
+            /**      ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, drawer,
+             R.drawable.ic_info_black_24dp, // nav menu toggle icon
+             R.string.app_name, // nav drawer open - description for
+             // accessibility
+             R.string.app_name // nav drawer close - description for
+             // accessibility
+             );
+             **/
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
@@ -279,7 +318,7 @@ public class MainActivity extends AppCompatActivity
                     .target(pos)
                     .zoom(16)
                     .build();
-            // Kamera wird auf aktuelle Position ausgerechnet
+            // Kamera wird auf aktuelle Position ausgerichtet
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         }

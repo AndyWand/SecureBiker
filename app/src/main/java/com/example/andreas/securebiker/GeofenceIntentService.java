@@ -32,7 +32,7 @@ public class GeofenceIntentService extends IntentService {
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
 
         if (geofencingEvent.hasError()) {
-            // TBD
+            //TODO TBD
         }
 
         // Get the transition type

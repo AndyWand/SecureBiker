@@ -4,15 +4,24 @@
 
     <header
         android:fragment="com.example.andreas.securebiker.SettingsActivity$GeneralPreferenceFragment"
-        android:title="@string/pref_header_general" android:icon="@drawable/ic_info_black_24dp" />
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="@string/pref_header_general" />
 
     <header
         android:fragment="com.example.andreas.securebiker.SettingsActivity$NotificationPreferenceFragment"
-        android:title="@string/pref_header_notifications"
-        android:icon="@drawable/ic_notifications_black_24dp" />
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/pref_header_notifications" />
 
     <header
         android:fragment="com.example.andreas.securebiker.SettingsActivity$DataSyncPreferenceFragment"
-        android:title="@string/pref_header_data_sync" android:icon="@drawable/ic_sync_black_24dp" />
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:summary="@string/pref_sync_summary"
+        android:title="@string/pref_header_data_sync" />
+
+    <header
+        android:fragment="com.example.andreas.securebiker.Fragments.SliderFragment"
+        android:icon="@drawable/ic_cast_dark"
+        android:summary="@string/pref_geofence_summary"
+        android:title="@string/pref_header_geofences" />
 
 </preference-headers>
