@@ -15,7 +15,6 @@ import java.util.ArrayList;
  */
 public class HelperClass extends AppCompatActivity {
 
-
     public static ArrayList<LatLng> getExample(Context c) {
 
         ArrayList<LatLng> list = new ArrayList<LatLng>();

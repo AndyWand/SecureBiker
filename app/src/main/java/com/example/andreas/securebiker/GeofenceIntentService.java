@@ -24,18 +24,20 @@ public class GeofenceIntentService extends IntentService {
     public static final String BROADCAST_ACTION = "com.example.andreas.securebiker";
     public static final String GEOFENCE_ID = "GEOFENCEID";
 
+
     public GeofenceIntentService() {
         super("Thread");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        boolean sound = intent.getBooleanExtra(MainActivity.SOUND, true);
+        boolean vibration = intent.getBooleanExtra(MainActivity.VIBRATION, true);
+        int time = intent.getIntExtra(MainActivity.TIME, 5);
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
-
         if (geofencingEvent.hasError()) {
             // TBD
         }
-
         // Get the transition type
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
@@ -51,30 +53,31 @@ public class GeofenceIntentService extends IntentService {
         i.addCategory(Intent.CATEGORY_DEFAULT);
         i.putExtra(GEOFENCE_ID, ids);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
-        buildNotification();
+        buildNotification(time, sound, vibration);
     }
 
     /**
      * Methode zur Bildung und Versand von Warn-Notification mit Alarm-Sound
      */
-    public void buildNotification() {
-        // Wake-Lock-Gedöns
-        PowerManager pm = (PowerManager)
-                getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = pm.newWakeLock(
-                PowerManager.PARTIAL_WAKE_LOCK, "");
-        wakeLock.acquire();
-
+    public void buildNotification(int time, boolean sound, boolean vibration) {
         // Notification-Gedöns
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder mBuilder;
-        mBuilder = new NotificationCompat.Builder(this)
-                .setSound(alarmSound)
-                .setCategory(Notification.CATEGORY_ALARM);
+        mBuilder = new NotificationCompat.Builder(this).setCategory(Notification.CATEGORY_ALARM);
+        if (sound)
+            mBuilder.setSound(alarmSound);
+        if (vibration) {
+            // Setting the vibration pattern
+            long[] vibrationPattern = new long[time];
+            vibrationPattern[0] = 0L;
+            for(int i = 1; i< vibrationPattern.length; i++){
+                vibrationPattern[i] = (long) 1000;
+            }
+            mBuilder
+                    .setVibrate(vibrationPattern);
+        }
         mNotificationManager.notify(0, mBuilder.build());
 
-        // Wake-Lock-Gedöns
-        wakeLock.release();
     }
 }
