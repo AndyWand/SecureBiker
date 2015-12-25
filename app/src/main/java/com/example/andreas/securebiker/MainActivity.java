@@ -10,10 +10,12 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.WakefulBroadcastReceiver;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -56,12 +58,19 @@ public class MainActivity extends AppCompatActivity
     private static final String NOT = "NOTIFICATIONS";
 
     // Boolean-Flags für Settings
+    public static final String SOUND="soundEnabled";
     private boolean soundEnabled = true;
+    public static final String VIBRATION="vibrationEnabled";
     private boolean vibrationEnabled = true;
+    public static final String ALERT = "alertDialogEnabled";
     private boolean alertDialogEnabled = true;
 
     // Laufzeit des AlarmDialog-Fensters
-    private int time = 5000;
+    public static final String TIME = "time";
+    private int time = 5;
+
+    // Anpassbarer_Geofence_Durchmesser
+    private int geofenceDiameter = 150;
 
     private Timer timer;
     private DialogFragment newFragment;
@@ -79,6 +88,8 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<LatLng> ltlng;
     private FileReaderTask task = null;
     private boolean alarmDialogOn = false;
+    //private PowerManager pm;
+    //private PowerManager.WakeLock wakeLock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -370,7 +381,7 @@ public class MainActivity extends AppCompatActivity
         geofenceList = new ArrayList<>();
         for (int i = 0; i < ltlng.size(); i++) {
             LatLng l = ltlng.get(i);
-            Geofence a = new Geofence.Builder().setCircularRegion(l.latitude, l.longitude, 150)
+            Geofence a = new Geofence.Builder().setCircularRegion(l.latitude, l.longitude, geofenceDiameter)
                     .setExpirationDuration(Geofence.NEVER_EXPIRE)
                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
                     .setRequestId(Integer.toString(i)).build();
@@ -401,11 +412,21 @@ public class MainActivity extends AppCompatActivity
      */
     private PendingIntent getGeofencePendingIntent() {
         Intent intent = new Intent(this, GeofenceIntentService.class);
+        intent.putExtra(ALERT,alertDialogEnabled);
+        intent.putExtra(SOUND,soundEnabled);
+        intent.putExtra(VIBRATION,vibrationEnabled);
+        intent.putExtra(TIME,time);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
         return PendingIntent.getService(this, 0, intent, PendingIntent.
                 FLAG_UPDATE_CURRENT);
     }
+
+    /** Quelltext zum entfernen von Geofences
+    LocationServices.GeofencingApi.removeGeofences(
+    mGoogleApiClient,
+    // This is the same pending intent that was used in addGeofences().
+    getGeofencePendingIntent()**/
 
     private void registerGeofences() {
         LocationServices.GeofencingApi.addGeofences(
@@ -418,7 +439,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * BroadcastReceiver zum Empfang von Nachrichten vom GeofenceIntentService
      */
-    public class AlarmBroadcastReceiver extends BroadcastReceiver {
+    public class AlarmBroadcastReceiver extends WakefulBroadcastReceiver{
 
         public AlarmBroadcastReceiver() {
         }
@@ -436,7 +457,7 @@ public class MainActivity extends AppCompatActivity
                 geofencePufferList.add(c);
                 currentGeofences.add(ids[i]);
             }
-            if (newFragment == null)
+            if (newFragment == null && alertDialogEnabled)
                 showAlarmDialog();
         }
 
@@ -464,7 +485,7 @@ public class MainActivity extends AppCompatActivity
                     }
 
                 }
-            }, time); // Laufzeit des DialogFensters: 5 Sek
+            }, (time*1000)); // Laufzeit des DialogFensters: 5 Sek
         }
 
 
