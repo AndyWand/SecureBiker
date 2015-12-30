@@ -24,7 +24,7 @@ public class HelperClass extends AppCompatActivity {
         BufferedReader br = null;
 
         try {
-            in = c.getResources().openRawResource(R.raw.point);
+            in = c.getResources().openRawResource(R.raw.examplepoints);
             inr = new InputStreamReader(in);
             br = new BufferedReader(inr);
             while ((s = br.readLine()) != null) {
@@ -36,19 +36,7 @@ public class HelperClass extends AppCompatActivity {
                 list.add(l);
             }
         } catch (IOException e) {
-
         }
-        /**
-         ArrayList<LatLng> list = new ArrayList<>();
-         for (double i = 0; i < getResources().getInteger(R.integer.numberofpoints); i++) {
-         String path = "R.array.p" + i;
-         String[] temp = getResources().getStringArray(Integer.parseInt(path));
-         Double[] t= new Double[2];
-         t[0] = Double.parseDouble(temp[0]);
-         t[1] = Double.parseDouble(temp[1]);
-         list.add(new LatLng(t[0], t[1]));
-         }
-         **/
         return list;
     }
 }

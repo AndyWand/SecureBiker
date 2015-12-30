@@ -5,13 +5,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+<<<<<<< HEAD
 import android.os.PowerManager;
 import android.provider.Settings;
+=======
+import android.preference.PreferenceManager;
+>>>>>>> refs/remotes/origin/andy_branch
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -20,12 +25,15 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+<<<<<<< HEAD
+=======
+import com.example.andreas.securebiker.Fragments.AllPreferencesFragment;
+>>>>>>> refs/remotes/origin/andy_branch
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
@@ -88,8 +96,12 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<LatLng> ltlng;
     private FileReaderTask task = null;
     private boolean alarmDialogOn = false;
+<<<<<<< HEAD
     //private PowerManager pm;
     //private PowerManager.WakeLock wakeLock;
+=======
+    private int alarmDialogTimer = 10;
+>>>>>>> refs/remotes/origin/andy_branch
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,7 +148,11 @@ public class MainActivity extends AppCompatActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         buildGoogleApiClient();
+        // load preferences from the system
+        loadPreferences();
+
     }
+
 
     @Override
     public void onBackPressed() {
@@ -163,13 +179,60 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                //open Settings-Activity
+                runSettingsActivity();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Methode wird aufgerufen, wenn der Settings-Button gedrückt wird
+     */
+    private void runSettingsActivity() {
+        Intent settings_intent = new Intent(this, SettingsActivity.class);
+        startActivity(settings_intent);
+    }
+
+    /**
+     * load preferences from the system
+     */
+    private void loadPreferences() {
+
+        PreferenceManager.setDefaultValues(this, R.xml.pref_all, false);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        //Radius of Geofences
+        sharedPrefs.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 50);
+        //Status of Alarmswitch (On/Off)
+        alarmDialogOn = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ALARMSWITCH, true);
+        //alarmtimer
+
+        //Status of Vibration
+
+        //ringtone
+    }
+
+    /**
+     * protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+     * // Check which request we're responding to
+     * if (requestCode == REQUESTCODE_SETTINGS && resultCode == RESULT_OK) {
+     * // Make sure the request was successful
+     * Bundle extras = data.getExtras();
+     * //Radius der Geofences hohlen
+     * extras.get("fences_radius");
+     * /**
+     * Bundle extras = data.getExtras();
+     * Bitmap image =(Bitmap) extras.get("data");
+     * ImageView imageView = (ImageView) findViewById(R.id.imageView);
+     * imageView.setImageBitmap(image);
+     * <p/>
+     * }
+     * <p/>
+     * }
+     **/
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -330,7 +393,7 @@ public class MainActivity extends AppCompatActivity
                     .target(pos)
                     .zoom(16)
                     .build();
-            // Kamera wird auf aktuelle Position ausgerechnet
+            // Kamera wird auf aktuelle Position ausgerichtet
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         }
