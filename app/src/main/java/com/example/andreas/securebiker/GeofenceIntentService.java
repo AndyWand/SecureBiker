@@ -58,6 +58,7 @@ public class GeofenceIntentService extends IntentService {
      */
     public void buildNotification() {
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+       // Uri alarmSound = RingtoneManager.getDefaultUri(R.raw.Luft_Alarm);
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder mBuilder;
         mBuilder = new NotificationCompat.Builder(this)

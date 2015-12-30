@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<LatLng> ltlng;
     private FileReaderTask task = null;
     private boolean alarmDialogOn = false;
+    private int alarmDialogTimer = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,14 +110,11 @@ public class MainActivity extends AppCompatActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         buildGoogleApiClient();
-
         // load preferences from the system
-        PreferenceManager.setDefaultValues(this, R.xml.pref_all, false);
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        sharedPrefs.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 50);
-        alarmDialogOn = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ALARMDIALOG,false);
+        loadPreferences();
 
     }
+
 
     @Override
     public void onBackPressed() {
@@ -162,23 +160,41 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Check which request we're responding to
-        if (requestCode == REQUESTCODE_SETTINGS && resultCode == RESULT_OK) {
-            // Make sure the request was successful
-            Bundle extras = data.getExtras();
-            //Radius der Geofences hohlen
-            extras.get("fences_radius");
-            /**
-             Bundle extras = data.getExtras();
-             Bitmap image =(Bitmap) extras.get("data");
-             ImageView imageView = (ImageView) findViewById(R.id.imageView);
-             imageView.setImageBitmap(image);
+     * load preferences from the system
+     */
+    private void loadPreferences() {
 
-        }
+        PreferenceManager.setDefaultValues(this, R.xml.pref_all, false);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        //Radius of Geofences
+        sharedPrefs.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 50);
+        //Status of Alarmswitch (On/Off)
+        alarmDialogOn = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ALARMSWITCH, true);
+        //alarmtimer
 
+        //Status of Vibration
+
+        //ringtone
     }
-        **/
+
+    /**
+     * protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+     * // Check which request we're responding to
+     * if (requestCode == REQUESTCODE_SETTINGS && resultCode == RESULT_OK) {
+     * // Make sure the request was successful
+     * Bundle extras = data.getExtras();
+     * //Radius der Geofences hohlen
+     * extras.get("fences_radius");
+     * /**
+     * Bundle extras = data.getExtras();
+     * Bitmap image =(Bitmap) extras.get("data");
+     * ImageView imageView = (ImageView) findViewById(R.id.imageView);
+     * imageView.setImageBitmap(image);
+     * <p/>
+     * }
+     * <p/>
+     * }
+     **/
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {

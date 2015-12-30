@@ -48,6 +48,7 @@ public class SettingsActivity extends PreferenceActivity {
      */
     private static final boolean ALWAYS_SIMPLE_PREFS = false;
     SharedPreferences.OnSharedPreferenceChangeListener listener;
+    SharedPreferences pref;
 
 
     @Override
@@ -55,18 +56,42 @@ public class SettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
 
         setupActionBar();
-
-        //  setupSimplePreferencesScreen();
-        FragmentTransaction tFrag = getFragmentManager().beginTransaction();
+        addPreferencesFromResource(R.xml.pref_all);
+        //FragmentTransaction tFrag = getFragmentManager().beginTransaction();
         //Add Layout for all Preferences
-        tFrag.add(android.R.id.content, new AllPreferencesFragment());
-        tFrag.commit();
+        //tFrag.add(android.R.id.content, new AllPreferencesFragment());
+        //tFrag.commit();
+
+        initializeSummarys();
 
         //get Preferences
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
         //set listener to the Preferences
         listener = new PreferenceChangeListener(this);
         pref.registerOnSharedPreferenceChangeListener(listener);
+    }
+
+    private void initializeSummarys() {
+        //Summary of Fences-Radius
+        Preference radiusPref = this.findPreference(AllPreferencesFragment.KEY_FENCES_RADIUS);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int radius = sharedPreferences.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 50) + 50;
+        radiusPref.setSummary(this.getString(R.string.settings_summary).replace("$1", "" + radius));
+        //Summary of Alarm-Timer
+        Preference alarmTimerPref = this.findPreference(AllPreferencesFragment.KEY_ALARMDIALOGTIMER);
+        alarmTimerPref.setSummary(sharedPreferences.getString(AllPreferencesFragment.KEY_ALARMDIALOGTIMER, "10"));
+        /**Sumary of Alarmsound (Gibt den Pfad aus)
+        Preference notiRingPref = this.findPreference(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_RING);
+        notiRingPref.setSummary(sharedPreferences.getString(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_RING, ""));
+       **/
+        //Sumary of Vibration (On/Off)
+        Preference notiVibPref = this.findPreference(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_VIB);
+        if (sharedPreferences.getBoolean(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_VIB, false)) {
+            notiVibPref.setSummary(R.string.pref_vibrate_on);
+        } else {
+            notiVibPref.setSummary(R.string.pref_vibrate_off);
+        }
+
     }
 
     /**
@@ -182,7 +207,8 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     protected void onResume() {
         super.onResume();
-      getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(listener);
+        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(listener);
+        initializeSummarys();
     }
 
     @Override
@@ -215,13 +241,6 @@ public class SettingsActivity extends PreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            //bindPreferenceSummaryToValue(findPreference("example_text"));
-            //bindPreferenceSummaryToValue(findPreference("example_list"));
         }
 
         @Override

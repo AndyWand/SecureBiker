@@ -65,10 +65,29 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="pref_vibrate_on">On</string>
+    <string name="pref_vibrate_off">Off</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_activity_map">Map</string>
 
+    <!-- Strings for Alarmtimer-->
+    <string name="pref_title_alarm_timer">Alarmtimer</string>
+
+    <string-array name="pref_alarm_timer">
+        <item>3 seconds</item>
+        <item>6 seconds</item>
+        <item>10 seconds</item>
+    </string-array>
+
+    <string-array name="pref_alarm_timer_values">
+        <item>3</item>
+        <item>6</item>
+        <item>10</item>
+    </string-array>
+
+    <!-- Strings for AlarmSwitch-->
+    <string name="pref_title_alarmswitch">Turn Alarm On/Off</string>
 
     <!-- Einstellungen für Geofences -->
     <string name="pref_header_geofences">Geonfecnes behavior</string>

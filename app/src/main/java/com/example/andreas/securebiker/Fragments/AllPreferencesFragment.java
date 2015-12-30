@@ -23,10 +23,12 @@ public class AllPreferencesFragment extends PreferenceFragment {
 
     public static final String KEY_SYNC_FREQUENZ = "sync_frequency";
     public static final String KEY_FENCES_RADIUS = "SEEKBAR_VALUE";
-    public static final String KEY_ALARMDIALOG = "ALARMDIALOG";
+    public static final String KEY_ALARMDIALOGTIMER = "ALARMDIALOG";
+    public static final String KEY_ALARMSWITCH ="ALARMSWITCH";
+    public static final String KEY_NOTIFI_MESSAGE_RING = "notifications_new_message_ringtone";
+    public static final String KEY_NOTIFI_MESSAGE_VIB = "notifications_new_message_vibrate";
 
     private SeekBarPreference seekBarPref;
-    PreferenceChangeListener listener;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +60,6 @@ public class AllPreferencesFragment extends PreferenceFragment {
             String stringValue = value.toString();
 
             // Set seekbar summary :
-            //TODO Take String from strings.xml and add current radius
             int radius = getRadius();
             preference.setSummary(getString(R.string.settings_summary).replace("$1", "" + radius));
 
