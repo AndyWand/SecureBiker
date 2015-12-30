@@ -1,7 +1,6 @@
 package com.example.andreas.securebiker;
 
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -11,12 +10,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-<<<<<<< HEAD
-import android.os.PowerManager;
-import android.provider.Settings;
-=======
 import android.preference.PreferenceManager;
->>>>>>> refs/remotes/origin/andy_branch
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -30,10 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-<<<<<<< HEAD
-=======
 import com.example.andreas.securebiker.Fragments.AllPreferencesFragment;
->>>>>>> refs/remotes/origin/andy_branch
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
@@ -52,10 +44,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
@@ -66,9 +58,9 @@ public class MainActivity extends AppCompatActivity
     private static final String NOT = "NOTIFICATIONS";
 
     // Boolean-Flags für Settings
-    public static final String SOUND="soundEnabled";
+    public static final String SOUND = "soundEnabled";
     private boolean soundEnabled = true;
-    public static final String VIBRATION="vibrationEnabled";
+    public static final String VIBRATION = "vibrationEnabled";
     private boolean vibrationEnabled = true;
     public static final String ALERT = "alertDialogEnabled";
     private boolean alertDialogEnabled = true;
@@ -96,14 +88,14 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<LatLng> ltlng;
     private FileReaderTask task = null;
     private boolean alarmDialogOn = false;
-<<<<<<< HEAD
+
     //private PowerManager pm;
     //private PowerManager.WakeLock wakeLock;
-=======
+
     private int alarmDialogTimer = 10;
->>>>>>> refs/remotes/origin/andy_branch
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
@@ -475,21 +467,23 @@ public class MainActivity extends AppCompatActivity
      */
     private PendingIntent getGeofencePendingIntent() {
         Intent intent = new Intent(this, GeofenceIntentService.class);
-        intent.putExtra(ALERT,alertDialogEnabled);
-        intent.putExtra(SOUND,soundEnabled);
-        intent.putExtra(VIBRATION,vibrationEnabled);
-        intent.putExtra(TIME,time);
+        intent.putExtra(ALERT, alertDialogEnabled);
+        intent.putExtra(SOUND, soundEnabled);
+        intent.putExtra(VIBRATION, vibrationEnabled);
+        intent.putExtra(TIME, time);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
         return PendingIntent.getService(this, 0, intent, PendingIntent.
                 FLAG_UPDATE_CURRENT);
     }
 
-    /** Quelltext zum entfernen von Geofences
-    LocationServices.GeofencingApi.removeGeofences(
-    mGoogleApiClient,
-    // This is the same pending intent that was used in addGeofences().
-    getGeofencePendingIntent()**/
+    /**
+     * Quelltext zum entfernen von Geofences
+     * LocationServices.GeofencingApi.removeGeofences(
+     * mGoogleApiClient,
+     * // This is the same pending intent that was used in addGeofences().
+     * getGeofencePendingIntent()
+     **/
 
     private void registerGeofences() {
         LocationServices.GeofencingApi.addGeofences(
@@ -502,7 +496,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * BroadcastReceiver zum Empfang von Nachrichten vom GeofenceIntentService
      */
-    public class AlarmBroadcastReceiver extends WakefulBroadcastReceiver{
+    public class AlarmBroadcastReceiver extends WakefulBroadcastReceiver {
 
         public AlarmBroadcastReceiver() {
         }
@@ -548,7 +542,7 @@ public class MainActivity extends AppCompatActivity
                     }
 
                 }
-            }, (time*1000)); // Laufzeit des DialogFensters: 5 Sek
+            }, (time * 1000)); // Laufzeit des DialogFensters: 5 Sek
         }
 
 

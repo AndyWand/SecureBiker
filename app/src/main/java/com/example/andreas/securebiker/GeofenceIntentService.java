@@ -59,15 +59,13 @@ public class GeofenceIntentService extends IntentService {
     /**
      * Methode zur Bildung und Versand von Warn-Notification mit Alarm-Sound
      */
-<<<<<<< HEAD
+
     public void buildNotification(int time, boolean sound, boolean vibration) {
         // Notification-Gedöns
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-=======
-    public void buildNotification() {
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        //Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
        // Uri alarmSound = RingtoneManager.getDefaultUri(R.raw.Luft_Alarm);
->>>>>>> refs/remotes/origin/andy_branch
+
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder mBuilder;
         mBuilder = new NotificationCompat.Builder(this).setCategory(Notification.CATEGORY_ALARM);
