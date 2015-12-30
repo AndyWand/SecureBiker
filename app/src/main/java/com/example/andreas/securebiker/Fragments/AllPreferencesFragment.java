@@ -122,6 +122,7 @@ public class AllPreferencesFragment extends PreferenceFragment {
                 // name.
                 String name = ringtone.getTitle(preference.getContext());
                 preference.setSummary(name);
+
             }
         }
     }
