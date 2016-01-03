@@ -31,9 +31,9 @@ public class GeofenceIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        boolean sound = intent.getBooleanExtra(MainActivity.SOUND, true);
-        boolean vibration = intent.getBooleanExtra(MainActivity.VIBRATION, true);
-        int time = intent.getIntExtra(MainActivity.TIME, 5);
+       // boolean sound = intent.getBooleanExtra(MainActivity.SOUND, true);
+       // boolean vibration = intent.getBooleanExtra(MainActivity.VIBRATION, true);
+       // int time = intent.getIntExtra(MainActivity.TIME, 5);
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             //TODO TBD
@@ -53,35 +53,7 @@ public class GeofenceIntentService extends IntentService {
         i.addCategory(Intent.CATEGORY_DEFAULT);
         i.putExtra(GEOFENCE_ID, ids);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
-        buildNotification(time, sound, vibration);
     }
 
-    /**
-     * Methode zur Bildung und Versand von Warn-Notification mit Alarm-Sound
-     */
 
-    public void buildNotification(int time, boolean sound, boolean vibration) {
-        // Notification-Gedöns
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        //Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-       // Uri alarmSound = RingtoneManager.getDefaultUri(R.raw.Luft_Alarm);
-
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder mBuilder;
-        mBuilder = new NotificationCompat.Builder(this).setCategory(Notification.CATEGORY_ALARM);
-        if (sound)
-            mBuilder.setSound(alarmSound);
-        if (vibration) {
-            // Setting the vibration pattern
-            long[] vibrationPattern = new long[time];
-            vibrationPattern[0] = 0L;
-            for(int i = 1; i< vibrationPattern.length; i++){
-                vibrationPattern[i] = (long) 1000;
-            }
-            mBuilder
-                    .setVibrate(vibrationPattern);
-        }
-        mNotificationManager.notify(0, mBuilder.build());
-
-    }
 }

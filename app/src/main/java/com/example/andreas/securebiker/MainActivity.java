@@ -1,5 +1,7 @@
 package com.example.andreas.securebiker;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -8,12 +10,16 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.support.v4.view.GravityCompat;
@@ -53,21 +59,21 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
-    String s;
+
     private final int REQUESTCODE_SETTINGS = 1;
     private static final String NOT = "NOTIFICATIONS";
 
     // Boolean-Flags für Settings
-    public static final String SOUND = "soundEnabled";
+    //public static final String SOUND = "soundEnabled";
     private boolean soundEnabled = true;
-    public static final String VIBRATION = "vibrationEnabled";
+    //public static final String VIBRATION = "vibrationEnabled";
     private boolean vibrationEnabled = true;
-    public static final String ALERT = "alertDialogEnabled";
+    //public static final String ALERT = "alertDialogEnabled";
     private boolean alertDialogEnabled = true;
 
     // Laufzeit des AlarmDialog-Fensters
     public static final String TIME = "time";
-    private int time = 5;
+    private int time = 6;
 
     // Anpassbarer_Geofence_Durchmesser
     private int geofenceDiameter = 150;
@@ -285,13 +291,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
-        // Entfernt Marker zur aktuellen Position
-        if (!(marker == null)) {
-            marker.remove();
-        }
-        // Entfernt aktuelle Puffer um Gefahrenstellen
-        for (int i = 0; i < geofencePufferList.size(); i++)
-            geofencePufferList.get(i).remove();
         googleApiClient.disconnect();   //schließt die Verbindung zu Google Play Services
         super.onStop();
     }
@@ -305,8 +304,16 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        // Entfernt aktuelle Puffer um Gefahrenstellen
+        for (int i = 0; i < geofencePufferList.size(); i++)
+            geofencePufferList.get(i).remove();
+        // Entfernt Marker zur aktuellen Position
+        if (!(marker == null)) {
+            marker.remove();
+        }
+        // Damit WarnDialog nicht in outState gespeichert wird und somit beim Neuaufbau der Activity nicht zwei Dialoge stehen können
         if (newFragment != null)
-            newFragment.dismiss(); // Damit WarnDialog nicht in outState gespeichert wird und somit beim Neuaufbau der Activity nicht zwei Dialoge stehen können
+            newFragment.dismiss();
         super.onSaveInstanceState(outState);
     }
 
@@ -467,10 +474,10 @@ public class MainActivity extends AppCompatActivity
      */
     private PendingIntent getGeofencePendingIntent() {
         Intent intent = new Intent(this, GeofenceIntentService.class);
-        intent.putExtra(ALERT, alertDialogEnabled);
+        /*intent.putExtra(ALERT, alertDialogEnabled);
         intent.putExtra(SOUND, soundEnabled);
         intent.putExtra(VIBRATION, vibrationEnabled);
-        intent.putExtra(TIME, time);
+        intent.putExtra(TIME, time);*/
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
         return PendingIntent.getService(this, 0, intent, PendingIntent.
@@ -505,15 +512,18 @@ public class MainActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent) {
             String[] ids = intent.getStringArrayExtra(GeofenceIntentService.GEOFENCE_ID);
             for (int i = 0; i < ids.length; i++) {
-                LatLng l = ltlng.get(Integer.parseInt(ids[i]));
-                Circle c = mMap.addCircle(new CircleOptions()
-                        .radius(150)
-                        .center(l)
-                        .fillColor(Color.argb(100, 0, 0, 255))
-                        .strokeWidth(0.1f));
-                geofencePufferList.add(c);
-                currentGeofences.add(ids[i]);
+                if(!(currentGeofences.contains(ids[i]))) {
+                    LatLng l = ltlng.get(Integer.parseInt(ids[i]));
+                    Circle c = mMap.addCircle(new CircleOptions()
+                            .radius(150)
+                            .center(l)
+                            .fillColor(Color.argb(100, 0, 0, 255))
+                            .strokeWidth(0.1f));
+                    geofencePufferList.add(c);
+                    currentGeofences.add(ids[i]);
+                }
             }
+            buildNotification(time, soundEnabled, vibrationEnabled); // Notification-Versand
             if (newFragment == null && alertDialogEnabled)
                 showAlarmDialog();
         }
@@ -542,10 +552,37 @@ public class MainActivity extends AppCompatActivity
                     }
 
                 }
-            }, (time * 1000)); // Laufzeit des DialogFensters: 5 Sek
+            }, (time * 1000)); // Laufzeit des DialogFensters
         }
 
+    }
 
+    /**
+     * Methode zur Bildung und Versand von Warn-Notification mit Alarm-Sound
+     */
+
+    public void buildNotification(int time, boolean sound, boolean vibration) {
+        // Notification-Gedöns
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        //Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        // Uri alarmSound = RingtoneManager.getDefaultUri(R.raw.Luft_Alarm);
+
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder mBuilder;
+        mBuilder = new NotificationCompat.Builder(this).setCategory(Notification.CATEGORY_ALARM);
+        if (sound)
+            mBuilder.setSound(alarmSound);
+        if (vibration) {
+            // Setting the vibration pattern
+            long[] vibrationPattern = new long[time];
+            vibrationPattern[0] = 0L;
+            for (int i = 1; i < vibrationPattern.length; i++) {
+                vibrationPattern[i] = (long) 1000;
+            }
+            mBuilder
+                    .setVibrate(vibrationPattern);
+        }
+        mNotificationManager.notify(0, mBuilder.build());
     }
 
     /**
