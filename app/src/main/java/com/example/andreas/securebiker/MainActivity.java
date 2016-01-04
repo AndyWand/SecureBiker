@@ -60,6 +60,9 @@ public class MainActivity extends AppCompatActivity
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
+    //public static final String CATEGORY_ENTER = "enter";
+   // public static final String CATEGORY_EXIT = "exit";
+
     private final int REQUESTCODE_SETTINGS = 1;
     private static final String NOT = "NOTIFICATIONS";
 
@@ -269,18 +272,18 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
         // Location Updates stoppen, um Batterie zu stoppen
         // Verbindung zu GooglePlayServices wird nicht unterbrochen
-        if (googleApiClient.isConnected()) {
+       /* if (googleApiClient.isConnected()) {
             stopLocationUpdates();
-        }
+        }*/
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         // Wiederaufnahme der Location Updates, siehe @onPause()
-        if (googleApiClient.isConnected()) {
+       /* if (googleApiClient.isConnected()) {
             startLocationUpdates();
-        }
+        }*/
     }
 
     @Override
@@ -291,12 +294,16 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
-        googleApiClient.disconnect();   //schließt die Verbindung zu Google Play Services
+       //   googleApiClient.disconnect(); //schließt die Verbindung zu Google Play Services
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
+        if (googleApiClient.isConnected()) {
+            stopLocationUpdates();
+        }
+        googleApiClient.disconnect();
         if (timer != null)
             timer.cancel();
         super.onDestroy();
@@ -304,13 +311,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+       // currentGeofences.clear();
         // Entfernt aktuelle Puffer um Gefahrenstellen
-        for (int i = 0; i < geofencePufferList.size(); i++)
+       /* for (int i = 0; i < geofencePufferList.size(); i++)
             geofencePufferList.get(i).remove();
         // Entfernt Marker zur aktuellen Position
         if (!(marker == null)) {
             marker.remove();
-        }
+        }*/
         // Damit WarnDialog nicht in outState gespeichert wird und somit beim Neuaufbau der Activity nicht zwei Dialoge stehen können
         if (newFragment != null)
             newFragment.dismiss();
@@ -445,7 +453,8 @@ public class MainActivity extends AppCompatActivity
             LatLng l = ltlng.get(i);
             Geofence a = new Geofence.Builder().setCircularRegion(l.latitude, l.longitude, geofenceDiameter)
                     .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER|
+                            Geofence.GEOFENCE_TRANSITION_EXIT)
                     .setRequestId(Integer.toString(i)).build();
             geofenceList.add(a);
         }
@@ -512,20 +521,25 @@ public class MainActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent) {
             String[] ids = intent.getStringArrayExtra(GeofenceIntentService.GEOFENCE_ID);
             for (int i = 0; i < ids.length; i++) {
-                if(!(currentGeofences.contains(ids[i]))) {
                     LatLng l = ltlng.get(Integer.parseInt(ids[i]));
                     Circle c = mMap.addCircle(new CircleOptions()
                             .radius(150)
                             .center(l)
                             .fillColor(Color.argb(100, 0, 0, 255))
                             .strokeWidth(0.1f));
+                if(!(currentGeofences.contains(ids[i]))) {
                     geofencePufferList.add(c);
                     currentGeofences.add(ids[i]);
+                    buildNotification(time, soundEnabled, vibrationEnabled); // Notification-Versand
+                    if (newFragment == null && alertDialogEnabled)
+                        showAlarmDialog();
+                }
+                else if (currentGeofences.contains(ids[i])){
+                    geofencePufferList.remove(c);
+                    currentGeofences.remove(ids[i]);
                 }
             }
-            buildNotification(time, soundEnabled, vibrationEnabled); // Notification-Versand
-            if (newFragment == null && alertDialogEnabled)
-                showAlarmDialog();
+
         }
 
         /**

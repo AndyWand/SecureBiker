@@ -1,14 +1,7 @@
 package com.example.andreas.securebiker;
 
 import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.PowerManager;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.Geofence;
@@ -38,21 +31,37 @@ public class GeofenceIntentService extends IntentService {
         if (geofencingEvent.hasError()) {
             //TODO TBD
         }
+
         // Get the transition type
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
-        // Get the Geofences that were triggered
-        List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
-        int s = triggeringGeofences.size();
-        String[] ids = new String[s];
-        for (int i = 0; i < s; i++)
-            ids[i] = triggeringGeofences.get(i).getRequestId();
+        if(geofenceTransition==Geofence.GEOFENCE_TRANSITION_ENTER||geofenceTransition==Geofence.GEOFENCE_TRANSITION_EXIT) {
+            // Get the Geofences that were triggered
+            List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
+            int s = triggeringGeofences.size();
+            String[] ids = new String[s];
+            for (int i = 0; i < s; i++)
+                ids[i] = triggeringGeofences.get(i).getRequestId();
 
-        Intent i = new Intent();
-        i.setAction(BROADCAST_ACTION);
-        i.addCategory(Intent.CATEGORY_DEFAULT);
-        i.putExtra(GEOFENCE_ID, ids);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+            Intent i = new Intent();
+            i.setAction(BROADCAST_ACTION);
+            i.addCategory(Intent.CATEGORY_DEFAULT);
+            i.putExtra(GEOFENCE_ID, ids);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+        }
+       /* else if(geofenceTransition==Geofence.GEOFENCE_TRANSITION_EXIT){
+            List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
+            int s = triggeringGeofences.size();
+            String[] ids = new String[s];
+            for (int i = 0; i < s; i++)
+                ids[i] = triggeringGeofences.get(i).getRequestId();
+
+            Intent i = new Intent();
+            i.setAction(BROADCAST_ACTION);
+            i.addCategory(MainActivity.CATEGORY_EXIT);
+            i.putExtra(GEOFENCE_ID, ids);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+        }*/
     }
 
 
