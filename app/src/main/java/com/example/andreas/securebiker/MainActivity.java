@@ -507,7 +507,6 @@ public class MainActivity extends AppCompatActivity
                         newFragment.dismiss();
                         // nach Ablauf des Timers schließt sich das DialogFenster automatisch
                     } catch (IllegalStateException e) {
-                        return;
                     } finally {
                         newFragment = null;
                     }
@@ -526,7 +525,6 @@ public class MainActivity extends AppCompatActivity
         // Notification-Gedöns
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         //Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-
         // Uri alarmSound = RingtoneManager.getDefaultUri(R.raw.Luft_Alarm);
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -574,7 +572,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected ArrayList<Geofence> doInBackground(Void... params) {
             ArrayList<LatLng> latLng = initializeGeofences();
-            ArrayList<Geofence> geofenceList = new ArrayList<Geofence>();
+            ArrayList<Geofence> geofenceList = new ArrayList<>();
             for (int i = 0; i < latLng.size(); i++) {
                 LatLng l = latLng.get(i);
                 CircleOptions c = new CircleOptions()
