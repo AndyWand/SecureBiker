@@ -526,6 +526,7 @@ public class MainActivity extends AppCompatActivity
         // Notification-Gedöns
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         //Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+
         // Uri alarmSound = RingtoneManager.getDefaultUri(R.raw.Luft_Alarm);
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
