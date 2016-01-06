@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NotificationCompat;
@@ -29,6 +30,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
 import com.example.andreas.securebiker.Fragments.AllPreferencesFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -48,6 +50,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -74,6 +80,13 @@ public class MainActivity extends AppCompatActivity
     private int time = 6;
     // Durchmesser des Geofence-Kreis
     public static final int GEOFENCE_CIRCLE_DIAMETER = 5;
+    // Vibrations-Muster für Alarm-Notification
+    public static final int THREE_SECONDS = 3;
+    public static final long[] vibrationThreeSeconds = {0, 1000, 1000, 2000};
+    public static final int SIX_SECONDS = 6;
+    public static final long[] vibrationSixSeconds = {0, 1000, 1000, 1000, 1000, 2000};
+    public static final int NINE_SECONDS = 9;
+    public static final long[] vibrationNineSeconds = {0, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000};
 
     // Kamerazoom
     private int cameraZoom = 16;
@@ -279,6 +292,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        // Beendigung aller laufenden Notifications
+        NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        nMgr.cancel(0);
         if (googleApiClient.isConnected()) {
             stopLocationUpdates();
         }
@@ -423,11 +439,11 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Methode zur Initalisierung der Liste mit Test-Geofences
-     */
-    private ArrayList<LatLng> initializeGeofences() {
-        ltlng = HelperClass.getExample(this);
-        return ltlng;
-    }
+
+     private ArrayList<LatLng> initializeGeofences() {
+     ltlng = HelperClass.getExample(this);
+     return ltlng;
+     }*/
 
     /**
      * Builds and returns a GeofencingRequest. Specifies the list of geofences to be monitored.
@@ -505,6 +521,9 @@ public class MainActivity extends AppCompatActivity
                 public void run() {
                     try {
                         newFragment.dismiss();
+                        // Beendigung der Notification
+                        NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                        nMgr.cancel(0);
                         // nach Ablauf des Timers schließt sich das DialogFenster automatisch
                     } catch (IllegalStateException e) {
                     } finally {
@@ -514,7 +533,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }, (time * 1000)); // Laufzeit des DialogFensters
         }
-
     }
 
     /**
@@ -523,24 +541,31 @@ public class MainActivity extends AppCompatActivity
 
     public void buildNotification(int time, boolean sound, boolean vibration) {
         // Notification-Gedöns
+        Uri a = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.alarm_bicycle_bell);
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         //Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         // Uri alarmSound = RingtoneManager.getDefaultUri(R.raw.Luft_Alarm);
-
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder mBuilder;
         mBuilder = new NotificationCompat.Builder(this).setCategory(Notification.CATEGORY_ALARM);
         if (sound)
-            mBuilder.setSound(alarmSound);
+            mBuilder.setSound(a);
+        // Setting the vibration pattern
         if (vibration) {
-            // Setting the vibration pattern
-            long[] vibrationPattern = new long[time];
-            vibrationPattern[0] = 0L;
+            long[] vibrationPattern = vibrationSixSeconds;
+            switch (time) {
+                case THREE_SECONDS:
+                    vibrationPattern = vibrationThreeSeconds;
+                case NINE_SECONDS:
+                    vibrationPattern = vibrationNineSeconds;
+                default:
+                    ;
+            }
+            mBuilder.setVibrate(vibrationPattern);
+            /*vibrationPattern[0] = 0L;
             for (int i = 1; i < vibrationPattern.length; i++) {
                 vibrationPattern[i] = (long) 1000;
-            }
-            mBuilder
-                    .setVibrate(vibrationPattern);
+            }*/
         }
         mNotificationManager.notify(0, mBuilder.build());
     }
@@ -549,6 +574,10 @@ public class MainActivity extends AppCompatActivity
      * Eigene AsyncTask-Klasse zum Import von Geofence-Locations
      */
     public class FileReaderTask extends AsyncTask<Void, CircleOptions, ArrayList<Geofence>> {
+
+        InputStream iS = null;
+        InputStreamReader iSR = null;
+        BufferedReader bR = null;
 
         @Override
         protected void onPreExecute() {
@@ -571,23 +600,72 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected ArrayList<Geofence> doInBackground(Void... params) {
-            ArrayList<LatLng> latLng = initializeGeofences();
             ArrayList<Geofence> geofenceList = new ArrayList<>();
-            for (int i = 0; i < latLng.size(); i++) {
-                LatLng l = latLng.get(i);
-                CircleOptions c = new CircleOptions()
-                        .radius(GEOFENCE_CIRCLE_DIAMETER)
-                        .center(l)
-                        .fillColor(Color.argb(100, 0, 0, 255))
-                        .strokeWidth(0.1f);
-                Geofence a = new Geofence.Builder().setCircularRegion(l.latitude, l.longitude, geofenceDiameter)
-                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
-                        .setRequestId(Integer.toString(i)).build();
-                geofenceList.add(a);
-                publishProgress(c);
+            String s = "";
+            try {
+                // Initialisierung der Lese-Ströme zum Import der Gefahrenstellen
+                iS = getResources().openRawResource(R.raw.examplepoints);
+                iSR = new InputStreamReader(iS);
+                bR = new BufferedReader(iSR);
+                int i = 0; //RequestId für Geofences
+                while ((s = bR.readLine()) != null) {
+                    LatLng l = stringToLatLng(s);
+                    CircleOptions c = getCircleOptions(l);
+                    Geofence a = getGeofence(i, l);
+                    geofenceList.add(a);
+                    i++;
+                    publishProgress(c); // Übergabe des Circle-Objektes an onProgressUpdate-Methode
+                }
+            } catch (IOException e) {
+                //TODO TBD
             }
             return geofenceList;
         }
+
+
+        /**
+         * Konvertierung eines Strings mit LatLng-Koordinaten in ein LatLng-Objekt
+         *
+         * @param s
+         * @return
+         */
+        private LatLng stringToLatLng(String s) {
+            String[] temp = s.split(";");
+            // int num = Integer.parseInt(temp[0]);
+            double lat = Double.parseDouble(temp[1]);
+            double lon = Double.parseDouble(temp[2]);
+            LatLng l = new LatLng(lat, lon);
+            return l;
+        }
+
+        /**
+         * Erzeugung eines CircleOptions-Objektes aus LatLng-Objekt
+         *
+         * @param l
+         * @return
+         */
+        private CircleOptions getCircleOptions(LatLng l) {
+            return new CircleOptions()
+                    .radius(GEOFENCE_CIRCLE_DIAMETER)
+                    .center(l)
+                    .fillColor(Color.argb(100, 0, 0, 255))
+                    .strokeWidth(0.1f);
+        }
+
+        /**
+         * Erzeugung eines Geofence-Objekt aus LatLng-Objekt sowie int-Wert als ID
+         *
+         * @param i
+         * @param l
+         * @return
+         */
+        private Geofence getGeofence(int i, LatLng l) {
+            return new Geofence.Builder().setCircularRegion(l.latitude, l.longitude, geofenceDiameter)
+                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                    .setRequestId(Integer.toString(i)).build();
+        }
     }
+
+
 }
