@@ -85,8 +85,8 @@ public class MainActivity extends AppCompatActivity
     public static final long[] vibrationThreeSeconds = {0, 1000, 1000, 2000};
     public static final int SIX_SECONDS = 6;
     public static final long[] vibrationSixSeconds = {0, 1000, 1000, 1000, 1000, 2000};
-    public static final int NINE_SECONDS = 9;
-    public static final long[] vibrationNineSeconds = {0, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000};
+    public static final int NINE_SECONDS = 10;
+    public static final long[] vibrationNineSeconds = {0, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 2000};
 
     // Kamerazoom
     private int cameraZoom = 16;
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        loadPreferences();
         task = new FileReaderTask();
 
         geofenceList = null;
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity
         buildGoogleApiClient();
 
         // load preferences from the system
-        loadPreferences();
+
     }
 
     @Override
@@ -202,18 +202,18 @@ public class MainActivity extends AppCompatActivity
      * load preferences from the system
      */
     private void loadPreferences() {
-
         PreferenceManager.setDefaultValues(this, R.xml.pref_all, false);
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        //Radius of Geofences
-        sharedPrefs.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 50);
-        //Status of Alarmswitch (On/Off)
+        // Radius der Geofence
+        geofenceDiameter = sharedPrefs.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 50);
+        // Einstellung des Alarm-Buttons (On/Off)
         alarmDialogOn = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ALARMSWITCH, true);
         //alarmtimer
-
-        //Status of Vibration
-
-        //ringtone
+        time = Integer.parseInt(sharedPrefs.getString(AllPreferencesFragment.KEY_ALARMDIALOGTIMER,"0"));
+        // Vibration
+        vibrationEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_VIB,true);
+        // Klingelton
+        soundEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ALARMSWITCH,true);
     }
 
     /**
@@ -274,6 +274,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
+        loadPreferences();
         super.onResume();
     }
 
@@ -307,6 +308,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+
         // currentGeofences.clear();
         // Entfernt aktuelle Puffer um Gefahrenstellen
        /* for (int i = 0; i < geofenceCircles.size(); i++)
@@ -558,8 +560,8 @@ public class MainActivity extends AppCompatActivity
                     vibrationPattern = vibrationThreeSeconds;
                 case NINE_SECONDS:
                     vibrationPattern = vibrationNineSeconds;
-                default:
-                    ;
+                case SIX_SECONDS:
+                    vibrationPattern  = vibrationSixSeconds;
             }
             mBuilder.setVibrate(vibrationPattern);
             /*vibrationPattern[0] = 0L;
