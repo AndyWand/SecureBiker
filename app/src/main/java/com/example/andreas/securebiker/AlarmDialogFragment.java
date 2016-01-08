@@ -8,9 +8,11 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
+import java.util.Timer;
+
 /**
  * Created by Dominic on 29.11.2015.
- * Klasse zur Erstellung eines Warn-Dialogs
+ * Class for creating an AlertDialogFragment
  */
 public class AlarmDialogFragment extends DialogFragment {
 
@@ -18,24 +20,16 @@ public class AlarmDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.Title_AlarmDialogFragment)
                 .setMessage(R.string.Message_AlarmDialogFragment)
-                /*.setNeutralButton(R.string.Button_AlarmDialogFragment, new DialogInterface.OnClickListener() {
+                // button for closing the AlertDialog
+                .setNeutralButton(R.string.Button_AlarmDialogFragment, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        endNotification();
+                        dialog.cancel();
                     }
-                })*/
+                })
                 .setCancelable(true);
 
         return builder.create();
     }
-
-    /**
-     * Methode zum Abbrechen des Alarmtons, der durch Notification in GeofenceIntentService generiert wird
-     * Button wird derzeit nicht verwendet, Methode daher auskommentiert
-     */
-   /* public void endNotification() {
-        NotificationManager mNotificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.cancel(0);
-    }*/
 }
 
