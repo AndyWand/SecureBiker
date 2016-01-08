@@ -121,5 +121,8 @@
     <string name="settings_unit">m</string>
     <string name="settings_title">Set the radius of fences</string>
 
-
+    <!-- Strings für Toast-Texte -->
+    <string name="toast_activate_gps">Please activate GPS!</string>
+    <string name="googleapi_connection_failed">Connection to Google Play Services failed!</string>
+    <string name="googleapi_connection_suspended">Connection to Google Play Services suspended!</string>
 </resources>
