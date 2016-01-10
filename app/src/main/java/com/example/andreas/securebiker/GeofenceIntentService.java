@@ -113,7 +113,7 @@ public class GeofenceIntentService extends IntentService {
      * Method for loading app settings to define the alarm
      */
     private void loadPreferences() {
-        PreferenceManager.setDefaultValues(this, R.xml.pref_all, false);
+        //PreferenceManager.setDefaultValues(this, R.xml.pref_all, false);
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         // enabling/disabling the alarm
         alertEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ENABLE_NOTIFICATION, true);

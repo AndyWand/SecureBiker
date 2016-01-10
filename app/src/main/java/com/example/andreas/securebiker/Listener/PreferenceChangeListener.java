@@ -36,7 +36,7 @@ public class PreferenceChangeListener implements SharedPreferences.OnSharedPrefe
 
         if (key.equals(AllPreferencesFragment.KEY_ALARMDIALOGTIMER)) {
             Preference alarmTimerPref = prefActivity.findPreference(key);
-            alarmTimerPref.setSummary(sharedPreferences.getString(AllPreferencesFragment.KEY_ALARMDIALOGTIMER,"10"));
+            alarmTimerPref.setSummary(sharedPreferences.getString(AllPreferencesFragment.KEY_ALARMDIALOGTIMER,"10")+" "+prefActivity.getString(R.string.pref_alarm_timer_summary_unit));
         }
 
         /** Das macht keinen sinn: gibt den Pfad aus
