@@ -58,10 +58,10 @@
     <string name="pref_header_notifications">Notifications</string>
     <string name="pref_title_message_notifications">Enable notifications</string>
 
-    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_title_ringtone">Enable Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
 
-    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="pref_title_vibrate">Enable Vibration</string>
     <string name="pref_vibrate_on">On</string>
     <string name="pref_vibrate_off">Off</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -90,8 +90,7 @@
     <string name="pref_header_geofences">Geonfecnes behavior</string>
     <string name="pref_geofence_summary"></string>
     
-    <!-- Strings für die Einträge in der Sidebar
-    -->
+    <!-- Strings for Sidebar    -->
     <string name="activity_map_drawer_sound">Sound</string>
     <string name="activity_map_drawer_vibration">Vibration</string>
     <string name="activity_map_drawer_visual">Visual</string>
@@ -103,13 +102,13 @@
     <string name="nav_header_map_headline">SecureBiker</string>
     <string name="nav_header_map_subtitle">Settings</string>
 
-    <!-- Strings für Messages -->
+    <!-- Strings for Messages -->
     <string name="No_Location_Available">No Location available</string>
     <string name="Title_AlarmDialogFragment">Attention</string>
     <string name="Message_AlarmDialogFragment">Danger ahead</string>
     <string name="Button_AlarmDialogFragment">OK</string>
 
-    <!-- Strings für Settings-Activity -->
+    <!-- Strings for Settings-Activity -->
     <string name="activity_settings_textview_text">Radius of Fences</string>
     <string name="textview_text">SeekBarPreference test</string>
     <string name="menu_settings">Settings</string>
@@ -118,7 +117,7 @@
     <string name="settings_unit">m</string>
     <string name="settings_title">Set the radius of fences</string>
 
-    <!-- Strings für Toast-Texte -->
+    <!-- Strings for Toast-Texte -->
     <string name="toast_activate_gps">Please activate GPS!</string>
     <string name="googleapi_connection_failed">Connection to Google Play Services failed!</string>
     <string name="googleapi_connection_suspended">Connection to Google Play Services suspended!</string>

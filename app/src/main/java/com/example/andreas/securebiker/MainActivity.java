@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity
         // radius of geofence
         geofenceRadius = sharedPrefs.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 150);
         // enabling/disabling the alarm
-        alertEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ALARMSWITCH, true);
+        alertEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ENABLE_NOTIFICATION, true);
         // alarm duration
         alarmDuration = Integer.parseInt(sharedPrefs.getString(AllPreferencesFragment.KEY_ALARMDIALOGTIMER, "0"));
     }

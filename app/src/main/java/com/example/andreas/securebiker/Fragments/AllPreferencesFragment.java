@@ -24,9 +24,10 @@ public class AllPreferencesFragment extends PreferenceFragment {
     public static final String KEY_SYNC_FREQUENZ = "sync_frequency";
     public static final String KEY_FENCES_RADIUS = "SEEKBAR_VALUE";
     public static final String KEY_ALARMDIALOGTIMER = "ALARMDIALOG";
-    public static final String KEY_ALARMSWITCH ="ALARMSWITCH";
-    public static final String KEY_NOTIFI_MESSAGE_RING = "notifications_new_message_ringtone";
-    public static final String KEY_NOTIFI_MESSAGE_VIB = "notifications_new_message_vibrate";
+    public static final String KEY_ENABLE_ALARM = "ALARMSWITCH";
+    public static final String KEY_ENABLE_NOTIFICATION ="enable_notifications";
+    public static final String KEY_NOTIFI_MESSAGE_RING = "enable_notifications";
+    public static final String KEY_NOTIFI_MESSAGE_VIB = "notifications_vibrate";
 
     private SeekBarPreference seekBarPref;
 
