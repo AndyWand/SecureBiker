@@ -12,7 +12,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
@@ -25,6 +24,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.andreas.securebiker.Fragments.AllPreferencesFragment;
@@ -64,22 +64,15 @@ public class MainActivity extends AppCompatActivity
     private static final String NOT = "NOTIFICATIONS";
 
     // Settings variables
-    /*
-    public static final String SOUND_ENABLED = "com.example.andreas.securbiker.sound_enabled";
-    private boolean soundEnabled = true;
-    public static final String VIBRATION_ENABLED = "com.example.andreas.securbiker.vibration_enabled";
-    private boolean vibrationEnabled = true;
+    // screen on/off
     private boolean keepScreenOn = false;
-    public static final String ALARM_ENABLED = "com.example.andreas.securbiker.vibration_enabled.alarm_enabled";
-    */
     // alert on/off
-    private boolean alarmDialogOn = true;
+    private boolean alertEnabled = true;
     // geofence radius
-    private int geofenceRadius = 80;
+    private int geofenceRadius;
     // alarm duration
-    //public static final String TIME = "com.example.andreas.securbiker.alarmDuration";
-    private int alarmDuration = 6;
-    // Durchmesser des Geofence-Kreis
+    private int alarmDuration;
+    // diameter of danger spot circle
     public static final int GEOFENCE_CIRCLE_RADIUS = 5;
     // timer for scheduling the AlertDialog
     private Timer timer;
@@ -94,6 +87,7 @@ public class MainActivity extends AppCompatActivity
     private Location lastLocation;
     private LatLng pos;
     private Marker marker;
+    private ArrayList<LatLng> latLngList = null;
     private ArrayList<Geofence> geofenceList = null;
     private ArrayList<Circle> geofenceCircles = null;
 
@@ -101,8 +95,6 @@ public class MainActivity extends AppCompatActivity
     private AlarmBroadcastReceiver aB = null;
     private FileReaderTask task = null;
     private DialogFragment newFragment = null;
-
-    //private ArrayList<LatLng> ltlng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,7 +131,7 @@ public class MainActivity extends AppCompatActivity
         // creating the location request
         createLocationRequest();
 
-        // SupportMapFragment addressieren
+        // initializing SupportMapFragment
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -160,7 +152,7 @@ public class MainActivity extends AppCompatActivity
     private void checkGPS() {
         LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
         boolean gpsEnabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        // if GPS is diabled, the corresponding system settings activity will be started
+        // if GPS is disabled, the corresponding system settings activity will be started
         if (!gpsEnabled) {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             Toast toast = Toast.makeText(this, R.string.toast_activate_gps, Toast.LENGTH_LONG);
@@ -232,7 +224,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     /**
      * Method for loading the app settings
      */
@@ -242,13 +233,28 @@ public class MainActivity extends AppCompatActivity
         // radius of geofence
         geofenceRadius = sharedPrefs.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 150);
         // enabling/disabling the alarm
-        //alarmDialogOn = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ALARMSWITCH, true);
+        alertEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ALARMSWITCH, true);
         // alarm duration
         alarmDuration = Integer.parseInt(sharedPrefs.getString(AllPreferencesFragment.KEY_ALARMDIALOGTIMER, "0"));
-        // vibration
-        //vibrationEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_VIB, true);
-        // sound
-        // soundEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_RING, true);
+    }
+
+    /**
+     * Method for checking updates on geofence radius and device screen setting
+     *
+     * @param gR
+     * @param kSO
+     */
+    private void checkSettingsUpdate(int gR, boolean kSO) {
+        if (gR != geofenceRadius) {
+            TextView tV = (TextView) findViewById(R.id.dist_text);
+            tV.setText(Integer.toString(gR) + " " + Integer.toString(geofenceRadius));
+            getGeofenceID();
+            removeGeofences(); // removing current geofences
+            registerGeofences(); // re-registering geofences
+        }
+        if (kSO != keepScreenOn) {
+            setWindow(keepScreenOn);
+        }
     }
 
     /**
@@ -262,7 +268,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
+        boolean kSO = keepScreenOn;
+        int gR = geofenceRadius;
         loadPreferences();
+        checkSettingsUpdate(gR, kSO);
         super.onResume();
     }
 
@@ -283,6 +292,7 @@ public class MainActivity extends AppCompatActivity
         //NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         //nMgr.cancel(0);
         if (googleApiClient.isConnected()) {
+            removeGeofences();
             stopLocationUpdates();
         }
         // closing the connection to Google Play Services
@@ -336,7 +346,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Method for stopping des Empfangs von Location Updates
+     * Method for stopping location updates
      */
     protected void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
@@ -437,7 +447,7 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, GeofenceIntentService.class);
         /*
         intent.putExtra(TIME, alarmDuration);
-        intent.putExtra(ALARM_ENABLED,alarmDialogOn);
+        intent.putExtra(ALARM_ENABLED,alertEnabled);
         intent.putExtra(SOUND_ENABLED, soundEnabled);
         intent.putExtra(VIBRATION_ENABLED,vibrationEnabled);
         */
@@ -458,6 +468,27 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
+     * Method for removing geofences from the Google Play Services
+     */
+    private void removeGeofences() {
+        getGeofenceID();
+        ArrayList<String> ids = getGeofenceID();
+        LocationServices.GeofencingApi.removeGeofences(googleApiClient, ids);
+    }
+
+    /**
+     * Method for extracting all RequestID's from geofenceList
+     */
+    private ArrayList<String> getGeofenceID() {
+        ArrayList<String> ids = new ArrayList<>();
+        for (int i = 0; i < geofenceList.size(); i++) {
+            String id = geofenceList.get(i).getRequestId();
+            ids.add(id);
+        }
+        return ids;
+    }
+
+    /**
      * BroadcastReceiver for receiving intents from the GeofenceIntentService
      */
     public class AlarmBroadcastReceiver extends WakefulBroadcastReceiver {
@@ -472,7 +503,7 @@ public class MainActivity extends AppCompatActivity
 //                vibrateAlarm();
 //            if (soundEnabled)
 //                playAlarmSound();
-            if (newFragment == null && alarmDialogOn)
+            if (newFragment == null && alertEnabled)
                 showAlarmDialog();
         }
 
@@ -544,7 +575,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * AsyncTask for importing the locations of danger spots
      */
-    public class FileReaderTask extends AsyncTask<Void, CircleOptions, ArrayList<Geofence>> {
+    public class FileReaderTask extends AsyncTask<Void, CircleOptions, ArrayList<LatLng>> {
 
         // declaration of reading streams
         InputStream iS = null;
@@ -557,9 +588,11 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Geofence> geofences) {
-            // storing Geofences in MainActivity for further usage
-            geofenceList = geofences;
+        protected void onPostExecute(ArrayList<LatLng> latLngs) {
+            // storing LatLng's of danger spots in MainActivity for further usage
+            latLngList = latLngs;
+            // initializing geofenceList
+            getGeofences(latLngs);
             // registering geofences
             registerGeofences();
         }
@@ -573,32 +606,31 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        protected ArrayList<Geofence> doInBackground(Void... params) {
-            ArrayList<Geofence> geofenceList = new ArrayList<>();  // ArrayList for storing geofences
+        protected ArrayList<LatLng> doInBackground(Void... params) {
+            ArrayList<LatLng> latLngs = new ArrayList<>();  // ArrayList for storing LatLng's of danger spots
             String s = "";
             try {
                 // initializing the reading streams
                 iS = getResources().openRawResource(R.raw.examplepoints);
                 iSR = new InputStreamReader(iS);
                 bR = new BufferedReader(iSR);
-                int i = 0; //request id for geofence
+                int i = 0;
                 while ((s = bR.readLine()) != null) {
                     LatLng l = stringToLatLng(s); // converting String to LatLng object
                     CircleOptions c = getCircleOptions(l); // creating CircleOptions object
-                    Geofence a = getGeofence(i, l); // creating Geofence object
-                    geofenceList.add(a); // adding geofence to ArrayList
+                    // Geofence a = getGeofence(i, l); // creating Geofence object
+                    latLngs.add(l); // adding geofence to ArrayList
                     i++;
-                    publishProgress(c); // transfering circle object to onProgressUpdate-Methode
+                    publishProgress(c); // transfering circle object to onProgressUpdate-method
                 }
             } catch (IOException e) {
                 Log.e("Import failed!", "Import of danger spot locations failed");
             }
-            return geofenceList;
+            return latLngs;
         }
 
-
         /**
-         * Method for Converting a String into LatLng object
+         * Method for converting a String into LatLng object
          *
          * @param s
          * @return
@@ -626,20 +658,24 @@ public class MainActivity extends AppCompatActivity
                     .strokeWidth(0.1f);
         }
 
-        /**
-         * Method for creating a Geofence object from LatLng object and integer id
-         *
-         * @param i
-         * @param l
-         * @return
-         */
-        private Geofence getGeofence(int i, LatLng l) {
-            return new Geofence.Builder().setCircularRegion(l.latitude, l.longitude, geofenceRadius)
+    }
+
+    /**
+     * Method for creating an Geofence-List from LatLng-List
+     *
+     * @param latLngs
+     * @return
+     */
+    private void getGeofences(ArrayList<LatLng> latLngs) {
+        ArrayList<Geofence> geofences = new ArrayList<>();
+        for (int i = 0; i < latLngs.size(); i++) {
+            LatLng l = latLngs.get(i);
+            Geofence a = new Geofence.Builder().setCircularRegion(l.latitude, l.longitude, geofenceRadius)
                     .setExpirationDuration(Geofence.NEVER_EXPIRE)
                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
                     .setRequestId(Integer.toString(i)).build();
+            geofences.add(a);
         }
+        geofenceList = geofences;
     }
-
-
 }
