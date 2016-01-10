@@ -84,9 +84,15 @@
             android:key="notifications_new_message_vibrate"
             android:title="@string/pref_title_vibrate" />
 
-        <ListPreference
+        <SwitchPreference
+            android:defaultValue="true"
             android:dependency="notifications_new_message"
+            android:key="ALARMSWITCH"
+            android:title="@string/pref_title_alarmswitch" />
+
+        <ListPreference
             android:defaultValue="6"
+            android:dependency="ALARMSWITCH"
             android:entries="@array/pref_alarm_timer"
             android:entryValues="@array/pref_alarm_timer_values"
             android:key="ALARMDIALOG"
@@ -96,10 +102,5 @@
             android:title="@string/pref_title_alarm_timer" />
 
 
-        <SwitchPreference
-            android:dependency="notifications_new_message"
-            android:defaultValue="true"
-            android:key="ALARMSWITCH"
-            android:title="@string/pref_title_alarmswitch" />
     </PreferenceCategory>
 </PreferenceScreen>

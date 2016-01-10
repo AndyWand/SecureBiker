@@ -103,7 +103,7 @@ public class GeofenceIntentService extends IntentService {
      * Method for creating an alarm sound
      */
     public void playAlarmSound(int time) {
-        final MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.alarm_bicycle_bell);
+        final MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.spectre);
         mediaPlayer.start();
         Timer timer = new Timer();
         timer.schedule(new TimerTask() { // TimerTask for the auto-canceling of alarm sound

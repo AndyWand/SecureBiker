@@ -17,9 +17,6 @@
         based on your message history
     </string>
 
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
-
     <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
     <string-array name="pref_example_list_titles">
         <item>Always</item>
@@ -80,11 +77,11 @@
         <item>10 seconds</item>
     </string-array>
 
-    <integer-array name="pref_alarm_timer_values">
+    <string-array name="pref_alarm_timer_values">
         <item>3</item>
         <item>6</item>
         <item>10</item>
-    </integer-array>
+    </string-array>
 
     <!-- Strings for AlarmSwitch-->
     <string name="pref_title_alarmswitch">Turn Alarm On/Off</string>

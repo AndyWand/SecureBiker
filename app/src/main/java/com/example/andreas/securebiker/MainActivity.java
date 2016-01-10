@@ -56,7 +56,7 @@ import java.util.TimerTask;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
+        implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
@@ -120,8 +120,6 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
         // loading the app settings
         loadPreferences();
@@ -182,11 +180,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * TODO Andreas
+     * Handles the action when the 'Back'-Button is pressed
      */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        loadPreferences();
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -195,10 +194,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * TODO Andreas
+     * Handles the OptionMenu when it is created
      *
-     * @param menu
-     * @return
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -208,18 +205,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * TODO Andreas
-     *
-     * @param item
-     * @return
+     * Handle action bar item clicks here. The action bar will
+     * automatically handle clicks on the Home/Up button, so long
+     * as you specify a parent activity in AndroidManifest.xml.
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         switch (id) {
             case R.id.action_settings:
@@ -239,73 +231,24 @@ public class MainActivity extends AppCompatActivity
         startActivity(settings_intent);
     }
 
+
+
     /**
-     * Method for loading the app settings to define the alarm and geofence radius
+     * Method for loading the app settings
      */
     private void loadPreferences() {
         PreferenceManager.setDefaultValues(this, R.xml.pref_all, false);
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         // radius of geofence
-        // geofenceRadius = sharedPrefs.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 150);
+        geofenceRadius = sharedPrefs.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 150);
         // enabling/disabling the alarm
-        alarmDialogOn = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ALARMSWITCH, true);
+        //alarmDialogOn = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ALARMSWITCH, true);
         // alarm duration
         alarmDuration = Integer.parseInt(sharedPrefs.getString(AllPreferencesFragment.KEY_ALARMDIALOGTIMER, "0"));
         // vibration
         //vibrationEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_VIB, true);
         // sound
         // soundEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_RING, true);
-    }
-
-    /**
-     * protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-     * // Check which request we're responding to
-     * if (requestCode == REQUESTCODE_SETTINGS && resultCode == RESULT_OK) {
-     * // Make sure the request was successful
-     * Bundle extras = data.getExtras();
-     * //Radius der Geofences hohlen
-     * extras.get("fences_radius");
-     * /**
-     * Bundle extras = data.getExtras();
-     * Bitmap image =(Bitmap) extras.get("data");
-     * ImageView imageView = (ImageView) findViewById(R.id.imageView);
-     * imageView.setImageBitmap(image);
-     * <p/>
-     * }
-     * <p/>
-     * }
-     **/
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        //turn sound on/off
-        if (id == R.id.nav_sound) {
-            //turn vibration on/off
-        } else if (id == R.id.nav_vibration) {
-            //turn visual alert on/off
-        } else if (id == R.id.nav_visual) {
-            DrawerLayout drawer = (DrawerLayout) findViewById(id);
-            /**      ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, drawer,
-             R.drawable.ic_info_black_24dp, // nav menu toggle icon
-             R.string.app_name, // nav drawer open - description for
-             // accessibility
-             R.string.app_name // nav drawer close - description for
-             // accessibility
-             );
-             **/
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     /**
@@ -656,6 +599,7 @@ public class MainActivity extends AppCompatActivity
 
         /**
          * Method for Converting a String into LatLng object
+         *
          * @param s
          * @return
          */
@@ -670,6 +614,7 @@ public class MainActivity extends AppCompatActivity
 
         /**
          * Method for creating a CircleOptions object from LatLng object
+         *
          * @param l
          * @return
          */
@@ -683,6 +628,7 @@ public class MainActivity extends AppCompatActivity
 
         /**
          * Method for creating a Geofence object from LatLng object and integer id
+         *
          * @param i
          * @param l
          * @return

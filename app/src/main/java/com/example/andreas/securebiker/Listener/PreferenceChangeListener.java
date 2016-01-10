@@ -30,8 +30,11 @@ public class PreferenceChangeListener implements SharedPreferences.OnSharedPrefe
         }
         if (key.equals(AllPreferencesFragment.KEY_FENCES_RADIUS)) {
             Preference radiusPref = prefActivity.findPreference(key);
-            int radius = sharedPreferences.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 50) + 50;
+            int radius = sharedPreferences.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 50);
             radiusPref.setSummary(prefActivity.getString(R.string.settings_summary).replace("$1", "" + radius));
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt(AllPreferencesFragment.KEY_FENCES_RADIUS, radius);
+            //editor.commit();
         }
 
         if (key.equals(AllPreferencesFragment.KEY_ALARMDIALOGTIMER)) {

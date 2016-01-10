@@ -158,7 +158,7 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
         if (shouldPersist()) {
 
             mValue = mSeekBar.getProgress();
-            persistInt(mSeekBar.getProgress());
+            persistInt(mSeekBar.getProgress()+50);
             callChangeListener(mSeekBar.getProgress());
         }
 

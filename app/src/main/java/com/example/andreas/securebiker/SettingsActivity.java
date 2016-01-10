@@ -57,12 +57,8 @@ public class SettingsActivity extends PreferenceActivity {
 
         setupActionBar();
         addPreferencesFromResource(R.xml.pref_all);
-        //FragmentTransaction tFrag = getFragmentManager().beginTransaction();
-        //Add Layout for all Preferences
-        //tFrag.add(android.R.id.content, new AllPreferencesFragment());
-        //tFrag.commit();
 
-        initializeSummarys();
+        //initializeSummarys();
 
         //get Preferences
         pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -71,19 +67,24 @@ public class SettingsActivity extends PreferenceActivity {
         pref.registerOnSharedPreferenceChangeListener(listener);
     }
 
+    /**
+     * Set the Summary-text witch is shown on screen
+     */
     private void initializeSummarys() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         //Summary of Fences-Radius
         Preference radiusPref = this.findPreference(AllPreferencesFragment.KEY_FENCES_RADIUS);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         int radius = sharedPreferences.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 50) + 50;
         radiusPref.setSummary(this.getString(R.string.settings_summary).replace("$1", "" + radius));
+
         //Summary of Alarm-Timer
         Preference alarmTimerPref = this.findPreference(AllPreferencesFragment.KEY_ALARMDIALOGTIMER);
         alarmTimerPref.setSummary(sharedPreferences.getString(AllPreferencesFragment.KEY_ALARMDIALOGTIMER, "10"));
         /**Sumary of Alarmsound (Gibt den Pfad aus)
-        Preference notiRingPref = this.findPreference(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_RING);
-        notiRingPref.setSummary(sharedPreferences.getString(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_RING, ""));
-       **/
+         Preference notiRingPref = this.findPreference(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_RING);
+         notiRingPref.setSummary(sharedPreferences.getString(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_RING, ""));
+         **/
+
         //Sumary of Vibration (On/Off)
         Preference notiVibPref = this.findPreference(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_VIB);
         if (sharedPreferences.getBoolean(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_VIB, false)) {
@@ -105,13 +106,6 @@ public class SettingsActivity extends PreferenceActivity {
         }
     }
 
-    /**
-     * @Override public void onBuildHeaders(List<Header> target) {
-     * super.onBuildHeaders(target);
-     * loadHeadersFromResource(R.xml.pref_headers, target);
-     * }
-     **/
-
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         int id = item.getItemId();
@@ -132,78 +126,6 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
 
-    /**
-     * A preference value change listener that updates the preference's summary
-     * to reflect its new value.
-     * <p/>
-     * private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-     *
-     * @Override public boolean onPreferenceChange(Preference preference, Object value) {
-     * String stringValue = value.toString();
-     * <p/>
-     * if (preference instanceof ListPreference) {
-     * // For list preferences, look up the correct display value in
-     * // the preference's 'entries' list.
-     * ListPreference listPreference = (ListPreference) preference;
-     * int index = listPreference.findIndexOfValue(stringValue);
-     * <p/>
-     * // Set the summary to reflect the new value.
-     * preference.setSummary(
-     * index >= 0
-     * ? listPreference.getEntries()[index]
-     * : null);
-     * <p/>
-     * } else if (preference instanceof RingtonePreference) {
-     * // For ringtone preferences, look up the correct display value
-     * // using RingtoneManager.
-     * if (TextUtils.isEmpty(stringValue)) {
-     * // Empty values correspond to 'silent' (no ringtone).
-     * preference.setSummary(R.string.pref_ringtone_silent);
-     * <p/>
-     * } else {
-     * Ringtone ringtone = RingtoneManager.getRingtone(
-     * preference.getContext(), Uri.parse(stringValue));
-     * <p/>
-     * if (ringtone == null) {
-     * // Clear the summary if there was a lookup error.
-     * preference.setSummary(null);
-     * } else {
-     * // Set the summary to reflect the new ringtone display
-     * // name.
-     * String name = ringtone.getTitle(preference.getContext());
-     * preference.setSummary(name);
-     * }
-     * }
-     * <p/>
-     * } else {
-     * // For all other preferences, set the summary to the value's
-     * // simple string representation.
-     * preference.setSummary(stringValue);
-     * }
-     * return true;
-     * }
-     * };
-     * <p/>
-     * /**
-     * Binds a preference's summary to its value. More specifically, when the
-     * preference's value is changed, its summary (line of text below the
-     * preference title) is updated to reflect the value. The summary is also
-     * immediately updated upon calling this method. The exact display format is
-     * dependent on the type of preference.
-     * @see #//sBindPreferenceSummaryToValueListener
-     * <p/>
-     * private static void bindPreferenceSummaryToValue(Preference preference) {
-     * // Set the listener to watch for value changes.
-     * preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-     * <p/>
-     * // Trigger the listener immediately with the preference's
-     * // current value.
-     * sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-     * PreferenceManager
-     * .getDefaultSharedPreferences(preference.getContext())
-     * .getString(preference.getKey(), ""));
-     * }
-     **/
     @Override
     protected void onResume() {
         super.onResume();
