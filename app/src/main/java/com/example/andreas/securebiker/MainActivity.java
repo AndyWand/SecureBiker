@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
@@ -96,9 +97,18 @@ public class MainActivity extends AppCompatActivity
     private FileReaderTask task = null;
     private DialogFragment newFragment = null;
 
+    // PowerManager
+    PowerManager pM;
+    PowerManager.WakeLock wL;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // initializing PowerManager & acquiring WakeLock
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wL = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLog");
+        wL.acquire();
 
         // initial checkup of gps system settings
         checkGPS();
@@ -291,6 +301,8 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         //NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         //nMgr.cancel(0);
+        // releasing WakeLock
+        wL.release();
         if (googleApiClient.isConnected()) {
             removeGeofences();
             stopLocationUpdates();
