@@ -253,8 +253,8 @@ public class MainActivity extends AppCompatActivity
      */
     private void checkSettingsUpdate(int gR, boolean kSO) {
         if (gR != geofenceRadius) {
-            TextView tV = (TextView) findViewById(R.id.dist_text);
-            tV.setText(Integer.toString(gR) + " " + Integer.toString(geofenceRadius));
+            //TextView tV = (TextView) findViewById(R.id.dist_text);
+            //tV.setText(Integer.toString(gR) + " " + Integer.toString(geofenceRadius));
             getGeofenceID();
             removeGeofences(); // removing current geofences
             registerGeofences(); // re-registering geofences

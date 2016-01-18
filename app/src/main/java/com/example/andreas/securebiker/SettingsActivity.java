@@ -75,7 +75,7 @@ public class SettingsActivity extends PreferenceActivity {
         //Summary of Fences-Radius
         Preference radiusPref = this.findPreference(AllPreferencesFragment.KEY_FENCES_RADIUS);
         int radius = sharedPreferences.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 50) + 50;
-        radiusPref.setSummary(this.getString(R.string.settings_summary).replace("$1", "" + radius));
+        radiusPref.setSummary(this.getString(R.string.settings_summary).replace("$1", "" + radius)+this.getString(R.string.settings_unit));
 
         //Summary of Alarm-Timer
         Preference alarmTimerPref = this.findPreference(AllPreferencesFragment.KEY_ALARMDIALOGTIMER);
