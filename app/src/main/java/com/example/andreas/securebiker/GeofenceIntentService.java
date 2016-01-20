@@ -98,7 +98,7 @@ public class GeofenceIntentService extends IntentService {
      * Method for creating an alarm sound
      */
     public void playAlarmSound(int time) {
-        final MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.spectre);
+        final MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.alarm_bicycle_bell);
         mediaPlayer.start();
         Timer timer = new Timer();
         timer.schedule(new TimerTask() { // TimerTask for the auto-canceling of alarm sound
@@ -122,7 +122,7 @@ public class GeofenceIntentService extends IntentService {
         // vibration
         vibrationEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_VIB, true);
         // ringtone
-         soundEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_RING, true);
+        soundEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ENABLE_ALARM, true);
     }
 }
 

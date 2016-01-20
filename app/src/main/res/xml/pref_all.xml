@@ -53,7 +53,6 @@
 
         <ListPreference
             android:defaultValue="6"
-            android:dependency="ALARMSWITCH"
             android:entries="@array/pref_alarm_timer"
             android:entryValues="@array/pref_alarm_timer_values"
             android:key="ALARMDIALOG"
