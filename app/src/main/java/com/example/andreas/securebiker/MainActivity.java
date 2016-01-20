@@ -61,9 +61,6 @@ public class MainActivity extends AppCompatActivity
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
-    private final int REQUESTCODE_SETTINGS = 1;
-    private static final String NOT = "NOTIFICATIONS";
-
     // Settings variables
     // screen on/off
     private boolean keepScreenOn = false;
@@ -241,9 +238,9 @@ public class MainActivity extends AppCompatActivity
         PreferenceManager.setDefaultValues(this, R.xml.pref_all, false);
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         // radius of geofence
-        geofenceRadius = sharedPrefs.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 150);
+        geofenceRadius = sharedPrefs.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 100)+50;
         // enabling/disabling the alarm
-        alertEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ALARMSWITCH, true);
+        alertEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ENABLE_NOTIFICATION, true);
         // alarm duration
         alarmDuration = Integer.parseInt(sharedPrefs.getString(AllPreferencesFragment.KEY_ALARMDIALOGTIMER, "0"));
     }
@@ -256,8 +253,8 @@ public class MainActivity extends AppCompatActivity
      */
     private void checkSettingsUpdate(int gR, boolean kSO) {
         if (gR != geofenceRadius) {
-            TextView tV = (TextView) findViewById(R.id.dist_text);
-            tV.setText(Integer.toString(gR) + " " + Integer.toString(geofenceRadius));
+            //TextView tV = (TextView) findViewById(R.id.dist_text);
+            //tV.setText(Integer.toString(gR) + " " + Integer.toString(geofenceRadius));
             getGeofenceID();
             removeGeofences(); // removing current geofences
             registerGeofences(); // re-registering geofences

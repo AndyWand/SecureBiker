@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SecureBiker</string>
+    <string name="Button_AlarmDialogFragment">OK</string>
+    <string name="Message_AlarmDialogFragment">Gefahr vorraus</string>
+    <string name="Title_AlarmDialogFragment">Achtung</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="activity_map_drawer_send">Senden</string>
+    <string name="activity_map_drawer_share">Teilen</string>
+    <string name="activity_map_drawer_tools">Werkzeuge</string>
+    <string name="activity_map_drawer_vibration">Vibration</string>
+    <string name="activity_settings_textview_text">Radius der Geofences</string>
+    <string name="googleapi_connection_failed">Keine Verbindung zu Google Play Services möglich</string>
+    <string name="googleapi_connection_suspended">Verbindung zu Google Play Services Unterbrochen</string>
+    <string name="menu_settings">Einstellungen</string>
+    <string name="nav_header_map_subtitle">Einstellungen</string>
+    <string name="navigation_drawer_close">Navigationsleiste schließen</string>
+    <string name="navigation_drawer_open">Navigationsleiste öffnen</string>
+    <string name="pref_alarm_timer_summary_unit">sekunden</string>
+    <string-array name="pref_alarm_timer">
+        <item>3 sekunden</item>
+        <item>6 sekunden</item>
+        <item>10 sekunden</item>
+    </string-array>
+
+    <string name="pref_header_notifications">Benachrichtigungen</string>
+    <string name="pref_title_alarmswitch">Alarm an</string>
+    <string name="pref_title_message_notifications">Benachrichtigungen an </string>
+    <string name="pref_title_ringtone">Klingelton an </string>
+    <string name="pref_title_vibrate">Vibration an </string>
+    <string name="pref_vibrate_off">An</string>
+    <string name="pref_vibrate_on">Aus</string>
+    <string name="settings_dialog_message">Radius</string>
+    <string name="settings_summary">Aktueller Wert: $1</string>
+    <string name="settings_title">Einstellen des Geofence-radius</string>
+    <string name="settings_unit">m</string>
+    <string name="title_activity_map">Karte</string>
+    <string name="title_activity_settings">Einstellungen</string>
+    <string name="toast_activate_gps">Bitte das GPS einschalten!</string>
+</resources>

@@ -7,7 +7,7 @@
     <color name="primary_text_default_material_light">#000000</color>
     <color name="side_nav_bar_startColor">@color/colorPrimary</color>
     <color name="side_nav_bar_centerColor">#4CAF50</color>
-    <color name="side_nav_bar_endColor">@color/TextfieldBackground</color>
+    <color name="side_nav_bar_endColor">#4CAF5F</color>
 
     <!-- Default values for sidebar color
     <color name="side_nav_bar_startColor">#81C784</color>

@@ -26,7 +26,7 @@ public class SliderFragment extends PreferenceFragment implements SharedPreferen
         super.onCreate(savedInstanceState);
 
         // Load the preferences from an XML resource
-        addPreferencesFromResource(R.xml.pref_fences_radius);
+        //addPreferencesFromResource(R.xml.pref_fences_radius);
 
 
         // Get widgets :

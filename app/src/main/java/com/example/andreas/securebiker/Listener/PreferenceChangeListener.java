@@ -30,16 +30,13 @@ public class PreferenceChangeListener implements SharedPreferences.OnSharedPrefe
         }
         if (key.equals(AllPreferencesFragment.KEY_FENCES_RADIUS)) {
             Preference radiusPref = prefActivity.findPreference(key);
-            int radius = sharedPreferences.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 50);
-            radiusPref.setSummary(prefActivity.getString(R.string.settings_summary).replace("$1", "" + radius));
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putInt(AllPreferencesFragment.KEY_FENCES_RADIUS, radius);
-            //editor.commit();
+            int radius = sharedPreferences.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 50)+50;
+            radiusPref.setSummary(prefActivity.getString(R.string.settings_summary).replace("$1", "" + radius)+prefActivity.getString(R.string.settings_unit));
         }
 
         if (key.equals(AllPreferencesFragment.KEY_ALARMDIALOGTIMER)) {
             Preference alarmTimerPref = prefActivity.findPreference(key);
-            alarmTimerPref.setSummary(sharedPreferences.getString(AllPreferencesFragment.KEY_ALARMDIALOGTIMER,"10"));
+            alarmTimerPref.setSummary(sharedPreferences.getString(AllPreferencesFragment.KEY_ALARMDIALOGTIMER,"10")+" "+prefActivity.getString(R.string.pref_alarm_timer_summary_unit));
         }
 
         /** Das macht keinen sinn: gibt den Pfad aus

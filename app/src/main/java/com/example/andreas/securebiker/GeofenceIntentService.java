@@ -98,7 +98,7 @@ public class GeofenceIntentService extends IntentService {
      * Method for creating an alarm sound
      */
     public void playAlarmSound(int time) {
-        final MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.bicycle_bell);
+        final MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.spectre);
         mediaPlayer.start();
         Timer timer = new Timer();
         timer.schedule(new TimerTask() { // TimerTask for the auto-canceling of alarm sound
@@ -113,16 +113,16 @@ public class GeofenceIntentService extends IntentService {
      * Method for loading app settings to define the alarm
      */
     private void loadPreferences() {
-        PreferenceManager.setDefaultValues(this, R.xml.pref_all, false);
+        //PreferenceManager.setDefaultValues(this, R.xml.pref_all, false);
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         // enabling/disabling the alarm
-        alertEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ALARMSWITCH, true);
+        alertEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_ENABLE_NOTIFICATION, true);
         // alarm duration
         time = Integer.parseInt(sharedPrefs.getString(AllPreferencesFragment.KEY_ALARMDIALOGTIMER, "0"));
         // vibration
         vibrationEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_VIB, true);
         // ringtone
-        // soundEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_RING, true);
+         soundEnabled = sharedPrefs.getBoolean(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_RING, true);
     }
 }
 

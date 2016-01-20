@@ -75,11 +75,12 @@ public class SettingsActivity extends PreferenceActivity {
         //Summary of Fences-Radius
         Preference radiusPref = this.findPreference(AllPreferencesFragment.KEY_FENCES_RADIUS);
         int radius = sharedPreferences.getInt(AllPreferencesFragment.KEY_FENCES_RADIUS, 50) + 50;
-        radiusPref.setSummary(this.getString(R.string.settings_summary).replace("$1", "" + radius));
+        radiusPref.setSummary(this.getString(R.string.settings_summary).replace("$1", "" + radius)+this.getString(R.string.settings_unit));
 
         //Summary of Alarm-Timer
         Preference alarmTimerPref = this.findPreference(AllPreferencesFragment.KEY_ALARMDIALOGTIMER);
-        alarmTimerPref.setSummary(sharedPreferences.getString(AllPreferencesFragment.KEY_ALARMDIALOGTIMER, "10"));
+        alarmTimerPref.setSummary(sharedPreferences.getString(AllPreferencesFragment.KEY_ALARMDIALOGTIMER,"10")+" "+this.getString(R.string.pref_alarm_timer_summary_unit));
+
         /**Sumary of Alarmsound (Gibt den Pfad aus)
          Preference notiRingPref = this.findPreference(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_RING);
          notiRingPref.setSummary(sharedPreferences.getString(AllPreferencesFragment.KEY_NOTIFI_MESSAGE_RING, ""));
@@ -161,7 +162,7 @@ public class SettingsActivity extends PreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_general);
+            addPreferencesFromResource(R.xml.pref_all);
             setHasOptionsMenu(true);
         }
 
@@ -185,7 +186,7 @@ public class SettingsActivity extends PreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_notification);
+            addPreferencesFromResource(R.xml.pref_all);
             setHasOptionsMenu(true);
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
@@ -215,7 +216,7 @@ public class SettingsActivity extends PreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_data_sync);
+            addPreferencesFromResource(R.xml.pref_all);
             setHasOptionsMenu(true);
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
